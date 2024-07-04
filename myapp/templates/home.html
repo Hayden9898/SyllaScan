@@ -1,4 +1,15 @@
-{% extends "base.html"%} {% block title %} Home Page {% endblock %}
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% csrf_token %}
+{% crispy form %}
+<!-- for input fields, add {|crispy} -->
+ {% block title %} Home Page {% endblock %}
 {% block content %}
+<link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/quartz/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/quartz/bootstrap.min.css">
 
+<div class ="container" style ="width:500px">
+    <h1>Title of projects</h1>
+    <p text-align: center>The purpose of this application is to make scheduling important school events much easier for students by just uploading a pdf and the rest is handled and your calendar is updated</p>
+</div>
 {% endblock %}
