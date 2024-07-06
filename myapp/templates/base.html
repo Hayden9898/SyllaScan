@@ -8,7 +8,10 @@
         Django App
       {% endblock %}
     </title>
+    {%load static%}
+    <link rel="stylesheet" href="{%static 'styles.css'%}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"  rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
   <body>
     <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
@@ -45,6 +48,11 @@
             </li>
           </ul>
           <form class="d-flex">
+            <a  class="logoCol" href="https://github.com/Hayden9898" target="_blank" rel="noopener noreferer">
+            <i class="fa fa-github" style="font-size:36px"></i>
+            <a  class="logoCol" href="https://www.linkedin.com/in/hayden-choi9/" target="_blank" rel="noopener noreferer">
+              <i class="fa fa-linkedin-square" style="font-size:36px"></i>
+          </a>
             <input class="form-control me-sm-2" type="search" placeholder="Search">
             <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
           </form>
@@ -55,4 +63,5 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" ></script>
   </body>
+  
 </html>
