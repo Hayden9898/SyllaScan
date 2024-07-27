@@ -40,11 +40,16 @@ INSTALLED_APPS = [
     "myapp",
     "crispy_forms",
     "crispy_bootstrap5",
+    'oauth2_provider',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+AUTH_USER_MODEL = 'myapp.User'
+
+LOGIN_URL = '/admin/login/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -82,8 +87,12 @@ WSGI_APPLICATION = 'pythonWebpage.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'syllabusscanner', #may be SyllabusScanner#
+        'USER': 'postgres',
+        'PASSWORD': 'Hayden1234!',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
