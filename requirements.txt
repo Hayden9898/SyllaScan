@@ -1,0 +1,5 @@
+crispy-bootstrap5
+django
+oauth2-provider
+django-crispy-forms
+psycopg2-binary
