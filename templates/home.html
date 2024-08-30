@@ -1,9 +1,5 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags %}
-{% csrf_token %}
-{% crispy form %}
-<!-- for input fields, add {|crispy} -->
- {% block title %} Home Page {% endblock %}
+{% block title %} Home Page {% endblock %}
 {% block content %}
 <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/quartz/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/quartz/bootstrap.min.css">
@@ -28,8 +24,8 @@
     const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
   
     // TODO(developer): Set to client ID and API key from the Developer Console
-    const CLIENT_ID = 'ENTER CLIENT ID';
-    const API_KEY = 'ENTER API KEY';
+    const CLIENT_ID = '{{ CLIENT_ID }}';
+    const API_KEY = '{{ API_KEY }}';
   
     // TODO(developer): Replace with your own project number from console.developers.google.com.
     const APP_ID = 'ENTER APP ID';
