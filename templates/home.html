@@ -20,6 +20,18 @@ content %}
 </div>
 <div class="d-flex flex-column justify-content-center">
 	<div class="d-flex justify-content-center">
+		<div class="d-flex flex-column">
+      <span id="upload-filename"></span>
+			<label for="file-upload" class="btn btn-info bg-white text-black">
+				Local Upload
+			</label>
+			<input
+				type="file"
+				id="file-upload"
+				style="display: none"
+				onchange="handleFileUpload(event)"
+			/>
+		</div>
 		<button
 			id="authorize_button"
 			class="btn btn-info bg-white text-black"
@@ -191,6 +203,14 @@ content %}
 					data.docs[0].embedUrl;
 				console.log(`URL: ${data}`);
 			}
+		}
+
+		function handleFileUpload(event) {
+			// Get the file name from the input
+			const fileName = event.target.files[0]?.name || "No file selected";
+
+			// Display the file name in the span
+			document.getElementById("upload-filename").innerText = fileName;
 		}
 	</script>
 	<script
