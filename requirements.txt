@@ -1,8 +1,4 @@
 fastapi
 uvicorn
-
-django
+python-dotenv
 oauth2-provider
-django-crispy-forms
-psycopg2-binary
-crispy-bootstrap5
