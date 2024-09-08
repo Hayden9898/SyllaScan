@@ -1,45 +1,69 @@
 import useDrivePicker from 'react-google-drive-picker';
+import { useState, useEffect } from 'react';
 
-function handleFileUpload(event) {
-    // Get the file name from the input
-    const fileName = event.target.files[0]?.name || "No file selected";
+// TODO: Add ability to upload multiple files
 
-    // Display the file name in the span
-    document.getElementById("upload-filename").innerText = fileName;
-    document.getElementById("upload-filename").classList.remove("d-none");
-
-    // Upload the file
-    uploadFile(event.target.files[0]);
-}
-
-function uploadFile(file) {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    fetch("http://localhost:8000/upload", {
-        method: "POST",
-        body: formData,
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            console.log(data);
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
-}
 export default function DrivePicker() {
-    const [openPicker] = useDrivePicker();
+    const [files, setFiles] = useState(new Set());
+    const [localFiles, setLocalFiles] = useState([]);
+    const [authToken, setAuthToken] = useState(null);
+    const [openPicker, authRes] = useDrivePicker();
+
+    useEffect(() => {
+        if (authRes) {
+            setAuthToken(authRes.access_token);
+        }
+    }, [authRes]);
+
+    useEffect(() => {
+        return () => {
+            localFiles.forEach(({file, previewUrl}, index) => {
+                URL.revokeObjectURL(previewUrl);
+            });
+        };
+    }, [localFiles]);
+
+    function handleFileUpload(event) {
+        const file = event.target.files[0];
+        const formData = new FormData();
+
+        formData.append("file", file);
+
+        fetch("http://localhost:8000/upload", {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+
+        const newFiles = Array.from(event.target.files).map(file => ({
+            file,
+            previewUrl: URL.createObjectURL(file) // Create and store the object URL
+        }));
+
+        // Avoid adding duplicates by name
+        setLocalFiles((prevFiles) => {
+            const existingFileNames = new Set(prevFiles.map(f => f.file.name));
+            const filteredFiles = newFiles.filter(newFile => !existingFileNames.has(newFile.file.name));
+            return [...prevFiles, ...filteredFiles];
+        });
+    }
 
     const handleOpenPicker = () => {
         openPicker({
             clientId: process.env.REACT_APP_CLIENT_ID,
             developerKey: process.env.REACT_APP_API_KEY,
+            token: authToken,
             viewId: "DOCS",
             showUploadView: true,
             showUploadFolders: true,
             supportDrives: true,
-            multiselect: true,
+            // multiselect: true,
             callbackFunction: (data) => {
                 if (data.action === 'cancel') {
                     console.log('User clicked cancel/close button')
@@ -48,13 +72,11 @@ export default function DrivePicker() {
                 if (data.action === 'picked') {
                     const document = data.docs[0];
                     const fileId = document.id;
-                    window.document.getElementById("embed").src =
-                        data.docs[0].embedUrl;
+                    setFiles([...files, fileId]);
 
                     fetch("http://localhost:8000/get_file", {
                         method: "POST",
                         headers: {
-                            "Allow-Control-Allow-Origin": "*",
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify({
@@ -82,10 +104,12 @@ export default function DrivePicker() {
                         <p id="upload-filename" className="d-none"></p>
                     </label>
                     <input
+                        accept='application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/docx, .docx, .xlsx, .xls, .pdf, .doc, .txt, .rtf, .xml'
                         type="file"
                         id="file-upload"
                         style={{ display: "none" }}
                         onChange={handleFileUpload}
+                    // multiple
                     />
                 </div>
                 <button className="btn btn-info bg-white text-black gap-1 align-items-center" onClick={handleOpenPicker}>
@@ -97,7 +121,38 @@ export default function DrivePicker() {
                     Upload from Google Drive
                 </button>
             </div>
-            <embed src="" id="embed" width="500" height="500" />
+            <div className='d-flex flex-row gap-2 mx-2 overflow-x-auto'>
+                {
+                    [...files].map((file_id, i) => {
+                        return (
+                            <iframe
+                                key={i}
+                                id={`embed-${i}`}  // Unique ID for each iframe
+                                title={`embed-${i}`}  // Unique title for accessibility
+                                className='my-3'
+                                width="300"
+                                height="424"
+                                src={`https://drive.google.com/file/d/${file_id}/preview?usp=drive_web`}  // Corrected src attribute
+                                frameBorder="0"
+                                allowFullScreen  // Optional: allows fullscreen capability
+                            ></iframe>
+                        );
+                    })
+                }
+            </div>
+            <div className='d-flex flex-row gap-2 mx-2 overflow-x-auto'>
+                {localFiles.map(({ file, previewUrl }, index) => (
+                    <iframe
+                        key={index}
+                        title={file.name}
+                        src={previewUrl}
+                        width="300"
+                        height="424"
+                        frameBorder="0"
+                        style={{ margin: '10px' }}
+                    ></iframe>
+                ))}
+            </div>
         </div>
     );
 }
