@@ -17,7 +17,7 @@ export default function DrivePicker() {
 
     useEffect(() => {
         return () => {
-            localFiles.forEach(({file, previewUrl}, index) => {
+            localFiles.forEach(({ file, previewUrl }, index) => {
                 URL.revokeObjectURL(previewUrl);
             });
         };
@@ -25,21 +25,7 @@ export default function DrivePicker() {
 
     function handleFileUpload(event) {
         const file = event.target.files[0];
-        const formData = new FormData();
-
-        formData.append("file", file);
-
-        fetch("http://localhost:8000/upload", {
-            method: "POST",
-            body: formData,
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
+        if (!file) return;
 
         const newFiles = Array.from(event.target.files).map(file => ({
             file,
@@ -51,6 +37,33 @@ export default function DrivePicker() {
             const existingFileNames = new Set(prevFiles.map(f => f.file.name));
             const filteredFiles = newFiles.filter(newFile => !existingFileNames.has(newFile.file.name));
             return [...prevFiles, ...filteredFiles];
+        });
+    }
+
+    function handleFileDelete(file) {
+        setLocalFiles((prevFiles) => prevFiles.filter(f => f !== file));
+    }
+
+    function handleFileDeleteAll() {
+        setLocalFiles([]);
+    }
+
+    function uploadFiles() {
+        localFiles.forEach(({ file }) => {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            fetch("http://localhost:8000/upload", {
+                method: "POST",
+                body: formData,
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
         });
     }
 
