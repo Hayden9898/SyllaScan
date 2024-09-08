@@ -5,8 +5,12 @@ MODULE = main:app
 HOST = 0.0.0.0
 PORT = 8000
 
+# Start the server
+prod-front:
+	cd frontend && npm install && npm run build
+
 # Run the server
-run:
+prod-back:
 	uvicorn $(MODULE) --host $(HOST) --port $(PORT)
 
 # Start the server with reload

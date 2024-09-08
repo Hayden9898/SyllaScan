@@ -1,10 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
@@ -21,15 +17,6 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
-
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-templates = Jinja2Templates(directory="templates")
-
-
-@app.get("/", response_class=HTMLResponse)
-async def root(request: Request):
-    return templates.TemplateResponse("home.html", {"request": request, "API_KEY": os.getenv("API_KEY"), "CLIENT_SECRET": os.getenv("CLIENT_SECRET"), "CLIENT_ID": os.getenv("CLIENT_ID"), "APP_ID": os.getenv("APP_ID")})
 
 # need to accept only .txt, .docx, .pdf files
 @app.post("/upload", response_model=dict)
@@ -56,10 +43,7 @@ async def upload(request: Request):
         raise HTTPException(status_code=400, detail="No file or URL provided")
 
     # process with ai here
-    make_calendar_events()
+    # make_calendar_events()
 
     print(contents)
     return {"filename": file.filename}
-
-def make_calendar_events():
-    pass
