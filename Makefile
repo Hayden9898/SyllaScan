@@ -10,8 +10,12 @@ run:
 	uvicorn $(MODULE) --host $(HOST) --port $(PORT)
 
 # Start the server with reload
-dev:
+dev-back:
 	uvicorn $(MODULE) --host $(HOST) --port $(PORT) --reload
+
+# Start the frontend
+dev-front:
+	cd frontend && npm install && npm start
 
 # Linting with flake8
 lint:

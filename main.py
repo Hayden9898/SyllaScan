@@ -1,13 +1,26 @@
-from fastapi import FastAPI, HTTPException, Request, UploadFile
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
