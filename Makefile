@@ -5,13 +5,25 @@ MODULE = main:app
 HOST = 0.0.0.0
 PORT = 8000
 
+setup:
+	pip install -r requirements.txt
+	cd frontend && npm install
+
+# Start the server
+prod-front:
+	cd frontend && npm install && npm run build
+
 # Run the server
-run:
+prod-back:
 	uvicorn $(MODULE) --host $(HOST) --port $(PORT)
 
 # Start the server with reload
-dev:
+dev-back:
 	uvicorn $(MODULE) --host $(HOST) --port $(PORT) --reload
+
+# Start the frontend
+dev-front:
+	cd frontend && npm start
 
 # Linting with flake8
 lint:
