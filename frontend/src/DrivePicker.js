@@ -40,15 +40,40 @@ export default function DrivePicker() {
         });
     }
 
+    function handleURLDelete(url) {
+        setFiles((prevFiles) => prevFiles.filter(f => f !== url));
+    }
+
     function handleFileDelete(file) {
+        URL.revokeObjectURL(file.previewUrl);
         setLocalFiles((prevFiles) => prevFiles.filter(f => f !== file));
     }
 
     function handleFileDeleteAll() {
+        setFiles(new Set());
         setLocalFiles([]);
     }
 
     function uploadFiles() {
+        files.forEach((fileId) => {
+            fetch("http://localhost:8000/get_file", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    fileId: fileId,
+                })
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+        });
+
         localFiles.forEach(({ file }) => {
             const formData = new FormData();
             formData.append("file", file);
@@ -65,6 +90,8 @@ export default function DrivePicker() {
                     console.error("Error:", error);
                 });
         });
+
+        handleFileDeleteAll();
     }
 
     const handleOpenPicker = () => {
@@ -166,6 +193,9 @@ export default function DrivePicker() {
                     ></iframe>
                 ))}
             </div>
+            <button className="btn btn-info bg-white text-black gap-1 align-items-center" onClick={uploadFiles}>
+                Upload
+            </button>
         </div>
     );
 }
