@@ -3,3 +3,25 @@
     text-decoration: none;
     padding-right: 20px;
 }
+
+.box-row {
+    padding: 50px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+  }
+  
+  .box {
+    width: 150px;
+    height: 150px;
+    border: 1px solid black;
+    border-radius: 15px;
+    text-align: center;
+    cursor: pointer;
+    padding: 10px;
+    
+  }
+  
+  .selected {
+    background-color: lightblue;
+  }
