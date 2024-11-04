@@ -1,5 +1,6 @@
 import useDrivePicker from 'react-google-drive-picker';
 
+import SelectableBoxRow from './BoxSelect.js';
 import { FaLinkedin, FaGithub } from 'react-icons/fa';
 import './css/App.css';
 
@@ -67,6 +68,7 @@ function App() {
       },
     })
   };
+  
 
   return (
     <>
@@ -124,6 +126,12 @@ function App() {
           events much easier for students by just uploading a pdf and the rest is
           handled and your calendar is updated
         </p>
+      </div>
+      <h1 style={{ textAlign: "center" }}>
+        Select a platform to export to
+      </h1>
+      <div>
+        <SelectableBoxRow />
       </div>
       <div className="d-flex flex-column justify-content-center">
         <div className="d-flex justify-content-center gap-4">
