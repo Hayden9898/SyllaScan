@@ -1,5 +1,7 @@
 import useDrivePicker from 'react-google-drive-picker';
 import { useState, useEffect } from 'react';
+import SelectableBoxRow from './BoxSelect.js';
+import './css/DrivePicker.css';
 
 // TODO: Add ability to upload multiple files
 
@@ -136,66 +138,94 @@ export default function DrivePicker() {
     };
 
     return (
-        <div className="d-flex flex-column justify-content-center">
-            <div className="d-flex justify-content-center gap-4">
-                <div className="d-flex flex-column m-0">
-                    <label htmlFor="file-upload" className="btn btn-info bg-white text-black m-0 align-items-center h-100">
-                        Local Upload
-                        <p id="upload-filename" className="d-none"></p>
-                    </label>
-                    <input
-                        accept='application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/docx, .docx, .xlsx, .xls, .pdf, .doc, .txt, .rtf, .xml'
-                        type="file"
-                        id="file-upload"
-                        style={{ display: "none" }}
-                        onChange={handleFileUpload}
-                    // multiple
-                    />
+        <>
+
+            <div className="d-flex flex-column justify-content-center">
+                <div className="button-group">
+                    <div>
+                        <div className="upload-but">
+                            <label htmlFor="file-upload" className="btn btn-info bg-white text-black m-0 align-items-center h-100">
+                                <img
+                                    className="padded-logo"
+                                    src="https://cdn-icons-png.flaticon.com/512/2810/2810455.png"
+                                    alt="upload"
+                                />
+                                Local Upload
+                                <p id="upload-filename" className="d-none"></p>
+                            </label>
+                        </div>
+                        <input
+                            accept='application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/docx, .docx, .xlsx, .xls, .pdf, .doc, .txt, .rtf, .xml'
+                            type="file"
+                            id="file-upload"
+                            style={{ display: "none" }}
+                            onChange={handleFileUpload}
+                        />
+
+                    </div>
+
+                    <div>
+                        <div className="upload-but">
+                            <button className="btn btn-info bg-white text-black gap-1 align-items-center" onClick={handleOpenPicker}>
+                                <img
+                                    className="padded-logo"
+                                    src="https://imgs.search.brave.com/oMwyxbNaJljh7kuYGRIsUmuNijirC2PBKnkVDDxGMPA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9rc3Rh/dGljLmdvb2dsZXVz/ZXJjb250ZW50LmNv/bS9maWxlcy9kNTdi/MjQxMDZjMzRjN2U1/MGVmM2Q5ODQyM2I5/NGRkYWYzNWFkMmRh/NzNhOWI5ZDRkMTJm/NTJkYmI5ZGQ0YzA4/YzI5NTdmNjI1NWFi/ODY5MGQ1ZWYwYjMy/Y2ZmODI4N2UwOTU3/N2QwNWU0NzlkMjYz/ZTg3MjE2MGM0Yzll/ODM2Mw"
+                                    alt="google drive"
+                                />
+                                Upload from Google Drive
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <button className="btn btn-info bg-white text-black gap-1 align-items-center" onClick={handleOpenPicker}>
+                <div className='d-flex flex-row gap-2 mx-2 overflow-x-auto'>
+                    {
+                        [...files].map((file_id, i) => {
+                            return (
+                                <iframe
+                                    key={i}
+                                    id={`embed-${i}`}  // Unique ID for each iframe
+                                    title={`embed-${i}`}  // Unique title for accessibility
+                                    className='my-3'
+                                    width="300"
+                                    height="424"
+                                    src={`https://drive.google.com/file/d/${file_id}/preview?usp=drive_web`}  // Corrected src attribute
+                                    frameBorder="0"
+                                    allowFullScreen  // Optional: allows fullscreen capability
+                                ></iframe>
+                            );
+                        })
+                    }
+                </div>
+                <div className='d-flex flex-row gap-2 mx-2 overflow-x-auto'>
+                    {localFiles.map(({ file, previewUrl }, index) => (
+                        <iframe
+                            key={index}
+                            title={file.name}
+                            src={previewUrl}
+                            width="300"
+                            height="424"
+                            frameBorder="0"
+                            style={{ margin: '10px' }}
+                        ></iframe>
+                    ))}
+                </div>
+
+            </div>
+            <h1 style={{ textAlign: "center" }}>
+                Select a platform to export to
+            </h1>
+            <div>
+                <SelectableBoxRow />
+            </div>
+            <div className="cloud-button-container">
+                <button className="upload-cloud-but" onClick={uploadFiles}>
                     <img
-                        src="https://imgs.search.brave.com/oMwyxbNaJljh7kuYGRIsUmuNijirC2PBKnkVDDxGMPA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9rc3Rh/dGljLmdvb2dsZXVz/ZXJjb250ZW50LmNv/bS9maWxlcy9kNTdi/MjQxMDZjMzRjN2U1/MGVmM2Q5ODQyM2I5/NGRkYWYzNWFkMmRh/NzNhOWI5ZDRkMTJm/NTJkYmI5ZGQ0YzA4/YzI5NTdmNjI1NWFi/ODY5MGQ1ZWYwYjMy/Y2ZmODI4N2UwOTU3/N2QwNWU0NzlkMjYz/ZTg3MjE2MGM0Yzll/ODM2Mw"
-                        alt="google drive"
-                        width="30"
-                    />
-                    Upload from Google Drive
+                        className="padded-logo-cloud"
+                        src='https://cdn.icon-icons.com/icons2/3214/PNG/512/cloud_file_upload_server_icon_196427.png'>
+                    </img>
+                    Upload
                 </button>
             </div>
-            <div className='d-flex flex-row gap-2 mx-2 overflow-x-auto'>
-                {
-                    [...files].map((file_id, i) => {
-                        return (
-                            <iframe
-                                key={i}
-                                id={`embed-${i}`}  // Unique ID for each iframe
-                                title={`embed-${i}`}  // Unique title for accessibility
-                                className='my-3'
-                                width="300"
-                                height="424"
-                                src={`https://drive.google.com/file/d/${file_id}/preview?usp=drive_web`}  // Corrected src attribute
-                                frameBorder="0"
-                                allowFullScreen  // Optional: allows fullscreen capability
-                            ></iframe>
-                        );
-                    })
-                }
-            </div>
-            <div className='d-flex flex-row gap-2 mx-2 overflow-x-auto'>
-                {localFiles.map(({ file, previewUrl }, index) => (
-                    <iframe
-                        key={index}
-                        title={file.name}
-                        src={previewUrl}
-                        width="300"
-                        height="424"
-                        frameBorder="0"
-                        style={{ margin: '10px' }}
-                    ></iframe>
-                ))}
-            </div>
-            <button className="btn btn-info bg-white text-black gap-1 align-items-center" onClick={uploadFiles}>
-                Upload
-            </button>
-        </div>
+        </>
     );
 }
