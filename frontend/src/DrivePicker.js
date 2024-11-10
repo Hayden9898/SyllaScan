@@ -1,30 +1,32 @@
-import useDrivePicker from 'react-google-drive-picker';
-import { useState, useEffect } from 'react';
+import useDrivePicker from "react-google-drive-picker";
+import { useState, useEffect } from "react";
 import { MdClose } from "react-icons/md";
-import SelectableBoxRow from './BoxSelect.js';
-import './css/DrivePicker.css';
+import { MdOutlineArrowCircleRight } from "react-icons/md";
+import SelectableBoxRow from "./BoxSelect.js";
+import "./css/DrivePicker.css";
 
 // TODO: Add ability to upload multiple files
 
 export default function DrivePicker() {
-    const [files, setFiles] = useState(new Set());
-    const [localFiles, setLocalFiles] = useState([]);
-    const [authToken, setAuthToken] = useState(null);
-    const [openPicker, authRes] = useDrivePicker();
+  const [files, setFiles] = useState(new Set());
+  const [localFiles, setLocalFiles] = useState([]);
+  const [authToken, setAuthToken] = useState(null);
+  const [openPicker, authRes] = useDrivePicker();
+  const [showExportOptions, setShowExportOptions] = useState(false);
 
-    useEffect(() => {
-        if (authRes) {
-            setAuthToken(authRes.access_token);
-        }
-    }, [authRes]);
+  useEffect(() => {
+    if (authRes) {
+      setAuthToken(authRes.access_token);
+    }
+  }, [authRes]);
 
-    useEffect(() => {
-        return () => {
-            localFiles.forEach(({ file, previewUrl }, index) => {
-                URL.revokeObjectURL(previewUrl);
-            });
-        };
-    }, [localFiles]);
+  useEffect(() => {
+    return () => {
+      localFiles.forEach(({ file, previewUrl }, index) => {
+        URL.revokeObjectURL(previewUrl);
+      });
+    };
+  }, [localFiles]);
 
     function handleFileUpload(event) {
         const fileInput = event.target;
@@ -45,100 +47,100 @@ export default function DrivePicker() {
         fileInput.value = "";
     }
 
-    function handleURLDelete(url) {
-        setFiles((prevFiles) => prevFiles.filter(f => f !== url));
-    }
+  function handleURLDelete(url) {
+    setFiles((prevFiles) => prevFiles.filter((f) => f !== url));
+  }
 
     function handleFileDelete(file) {
         URL.revokeObjectURL(file.previewUrl); // Revoke URL to free memory
         setLocalFiles((prevFiles) => prevFiles.filter(f => f.file.name !== file.file.name));
     }
 
-    function handleFileDeleteAll() {
-        setFiles(new Set());
-        setLocalFiles([]);
-    }
+  function handleFileDeleteAll() {
+    setFiles(new Set());
+    setLocalFiles([]);
+  }
 
-    function uploadFiles() {
-        files.forEach((fileId) => {
-            fetch("http://localhost:8000/get_file", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    fileId: fileId,
-                })
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log(data);
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
-        });
-
-        localFiles.forEach(({ file }) => {
-            const formData = new FormData();
-            formData.append("file", file);
-
-            fetch("http://localhost:8000/upload", {
-                method: "POST",
-                body: formData,
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log(data);
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
-        });
-
-        handleFileDeleteAll();
-    }
-
-    const handleOpenPicker = () => {
-        openPicker({
-            clientId: process.env.REACT_APP_CLIENT_ID,
-            developerKey: process.env.REACT_APP_API_KEY,
-            token: authToken,
-            viewId: "DOCS",
-            showUploadView: true,
-            showUploadFolders: true,
-            supportDrives: true,
-            // multiselect: true,
-            callbackFunction: (data) => {
-                if (data.action === 'cancel') {
-                    console.log('User clicked cancel/close button')
-                }
-                console.log(data)
-                if (data.action === 'picked') {
-                    const document = data.docs[0];
-                    const fileId = document.id;
-                    setFiles([...files, fileId]);
-
-                    fetch("http://localhost:8000/get_file", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            fileId: fileId,
-                        })
-                    })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            console.log(data);
-                        })
-                        .catch((error) => {
-                            console.error("Error:", error);
-                        })
-                }
-            },
+  function uploadFiles() {
+    files.forEach((fileId) => {
+      fetch("http://localhost:8000/get_file", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fileId: fileId,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
         })
-    };
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    });
+
+    localFiles.forEach(({ file }) => {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      fetch("http://localhost:8000/upload", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    });
+    setShowExportOptions(false);
+    handleFileDeleteAll();
+  }
+
+  const handleOpenPicker = () => {
+    openPicker({
+      clientId: process.env.REACT_APP_CLIENT_ID,
+      developerKey: process.env.REACT_APP_API_KEY,
+      token: authToken,
+      viewId: "DOCS",
+      showUploadView: true,
+      showUploadFolders: true,
+      supportDrives: true,
+      // multiselect: true,
+      callbackFunction: (data) => {
+        if (data.action === "cancel") {
+          console.log("User clicked cancel/close button");
+        }
+        console.log(data);
+        if (data.action === "picked") {
+          const document = data.docs[0];
+          const fileId = document.id;
+          setFiles([...files, fileId]);
+
+          fetch("http://localhost:8000/get_file", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              fileId: fileId,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        }
+      },
+    });
+  };
 
     return (
         <>
@@ -210,18 +212,20 @@ export default function DrivePicker() {
                         })
                     }
                 </div>
-                <div className='d-flex flex-row gap-2 mx-2 overflow-x-auto'>
-                    {localFiles.map(({ file, previewUrl }, index) => (
+            </div>
+        <div className="d-flex flex-row gap-2 mx-2 overflow-x-auto">
+          {localFiles.map(({ file, previewUrl }, index) => (
                         <div className='position-relative d-flex'>
-                            <iframe
-                                key={index}
-                                title={file.name}
-                                src={previewUrl}
-                                width="300"
-                                height="424"
-                                frameBorder="0"
-                                style={{ margin: '10px' }}
-                            >
+                <div className="position-relative d-flex">
+              <iframe
+                    key={index}
+                    title={file.name}
+                    src={previewUrl}
+                    width="300"
+                    height="424"
+                    frameBorder="0"
+                    style={{ margin: "10px" }}
+                  >
                             </iframe>
                             <div className='position-absolute '>
                                 <button
@@ -232,25 +236,52 @@ export default function DrivePicker() {
                                 </button>
                             </div>
                         </div>
-                    ))}
-                </div>
-
+              <div className="position-absolute ">
+                <button
+                  className="btn btn-danger"
+                  onClick={() => handleFileDelete(localFiles[index])}
+                >
+                  <MdClose />
+                </button>
+              </div>
             </div>
+          ))}
+        </div>
+
+        {(files.size > 0 || localFiles.length > 0) && (
+          <div className="continue-button-container">
+            <button
+              className="continue-button-but"
+              onClick={() => setShowExportOptions(true)}
+            >
+              <span>
+                {" "}
+                Continue
+                <MdOutlineArrowCircleRight className="continue-right-arrow" />
+              </span>
+            </button>
+          </div>
+        )}
+        {showExportOptions && (
+          <>
             <h1 style={{ textAlign: "center" }}>
-                Select a platform to export to
+              Select a platform to export to
             </h1>
             <div>
-                <SelectableBoxRow />
+              <SelectableBoxRow />
             </div>
             <div className="cloud-button-container">
-                <button className="upload-cloud-but" onClick={uploadFiles}>
-                    <img alt='cloud'
-                        className="padded-logo-cloud"
-                        src='https://cdn.icon-icons.com/icons2/3214/PNG/512/cloud_file_upload_server_icon_196427.png'>
-                    </img>
-                    Upload
-                </button>
+              <button className="upload-cloud-but" onClick={uploadFiles}>
+                <img alt='cloud'
+                  alt="cloud"
+                  className="padded-logo-cloud"
+                  src="https://cdn.icon-icons.com/icons2/3214/PNG/512/cloud_file_upload_server_icon_196427.png"
+                />
+                Upload
+              </button>
             </div>
-        </>
-    );
+          </>
+        )}
+    </>
+  );
 }
