@@ -1,6 +1,7 @@
 import useDrivePicker from 'react-google-drive-picker';
 import { useState, useEffect } from 'react';
 import { MdClose } from "react-icons/md";
+import { MdOutlineArrowCircleRight } from "react-icons/md";
 import SelectableBoxRow from './BoxSelect.js';
 import './css/DrivePicker.css';
 
@@ -11,6 +12,7 @@ export default function DrivePicker() {
     const [localFiles, setLocalFiles] = useState([]);
     const [authToken, setAuthToken] = useState(null);
     const [openPicker, authRes] = useDrivePicker();
+    const [showExportOptions, setShowExportOptions] = useState(false);
 
     useEffect(() => {
         if (authRes) {
@@ -235,21 +237,38 @@ export default function DrivePicker() {
                     ))}
                 </div>
 
-            </div>
-            <h1 style={{ textAlign: "center" }}>
-                Select a platform to export to
-            </h1>
-            <div>
-                <SelectableBoxRow />
-            </div>
-            <div className="cloud-button-container">
-                <button className="upload-cloud-but" onClick={uploadFiles}>
-                    <img alt='cloud'
-                        className="padded-logo-cloud"
-                        src='https://cdn.icon-icons.com/icons2/3214/PNG/512/cloud_file_upload_server_icon_196427.png'>
-                    </img>
-                    Upload
-                </button>
+            {(files.size > 0 || localFiles.length > 0) && (
+                
+                <div className="continue-button-container">
+                    <button className="continue-button-but"
+                    onClick={() => setShowExportOptions(true)}>
+                        <span> Continue 
+                            
+                        <MdOutlineArrowCircleRight className='continue-right-arrow'/>
+                        </span>
+                    </button>
+                </div>
+                
+            )}
+              {showExportOptions &&(
+              <>
+                 <h1 style={{ textAlign: "center" }}>
+                    Select a platform to export to
+                </h1>
+                <div>
+                    <SelectableBoxRow />
+                </div>
+                <div className="cloud-button-container">
+                    <button className="upload-cloud-but" onClick={uploadFiles}>
+                        <img alt='cloud'
+                            className="padded-logo-cloud"
+                            src='https://cdn.icon-icons.com/icons2/3214/PNG/512/cloud_file_upload_server_icon_196427.png'
+                        />
+                        Upload
+                    </button>
+                </div>
+                </>
+                )}
             </div>
         </>
     );

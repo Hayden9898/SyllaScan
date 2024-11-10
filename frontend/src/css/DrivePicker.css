@@ -27,6 +27,7 @@
     transition: background-color 0.5s ease;
 }
 .cloud-button-container {
+    padding-bottom: 20px;
     display: flex;
     justify-content: center;
     align-items: center; 
@@ -53,3 +54,63 @@
     gap:40px;
 }
 
+.continue-button-container{
+    padding-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    width: 100%; 
+    margin-top: 20px; 
+}
+
+.continue-button-but{
+    position: relative;  
+    padding:10px;
+    padding-inline: 20px;
+    border-radius: 8px;
+    background: white;
+    border-color: rgb(92, 238, 245);
+    cursor: pointer;
+    overflow: hidden;
+    color: rgb(0, 0, 0);
+    transition: color 0.4s ease;
+}
+.continue-button-but::before{
+    content: "";                   
+    position: absolute;                
+    top: 0;                            
+    left: 0;                          
+    width: 0;                          
+    height: 100%;                      
+    background: rgb(187, 226, 47);     
+    transition: width 0.4s ease;       
+    z-index: 0;
+}
+
+.continue-button-but:hover::before {
+    width: 100%;                    
+}
+.continue-button-but span {
+    position: relative;         
+    z-index: 1;                   
+    transition: color 0.4s ease;      
+}
+.continue-button-but:hover{
+    color:black;    
+}
+
+@keyframes fillLeftToRight {
+    0% {
+        background-position: left;
+    }
+    100% {
+        background-position: right;
+    }
+}
+.continue-right-arrow{
+    font-size:40px;
+    padding-left: 10px;
+    align-self: right;  
+    position: relative;   
+    z-index: 1;         
+}
