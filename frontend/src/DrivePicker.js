@@ -1,5 +1,6 @@
 import useDrivePicker from 'react-google-drive-picker';
 import { useState, useEffect } from 'react';
+import { MdClose } from "react-icons/md";
 import SelectableBoxRow from './BoxSelect.js';
 import './css/DrivePicker.css';
 
@@ -26,20 +27,22 @@ export default function DrivePicker() {
     }, [localFiles]);
 
     function handleFileUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
+        const fileInput = event.target;
+        const files = Array.from(event.target.files);
+        if (files.length === 0) return;
 
-        const newFiles = Array.from(event.target.files).map(file => ({
+        const newFiles = files.map(file => ({
             file,
-            previewUrl: URL.createObjectURL(file) // Create and store the object URL
+            previewUrl: URL.createObjectURL(file),
         }));
 
-        // Avoid adding duplicates by name
         setLocalFiles((prevFiles) => {
             const existingFileNames = new Set(prevFiles.map(f => f.file.name));
             const filteredFiles = newFiles.filter(newFile => !existingFileNames.has(newFile.file.name));
             return [...prevFiles, ...filteredFiles];
         });
+
+        fileInput.value = "";
     }
 
     function handleURLDelete(url) {
@@ -47,8 +50,8 @@ export default function DrivePicker() {
     }
 
     function handleFileDelete(file) {
-        URL.revokeObjectURL(file.previewUrl);
-        setLocalFiles((prevFiles) => prevFiles.filter(f => f !== file));
+        URL.revokeObjectURL(file.previewUrl); // Revoke URL to free memory
+        setLocalFiles((prevFiles) => prevFiles.filter(f => f.file.name !== file.file.name));
     }
 
     function handleFileDeleteAll() {
@@ -139,7 +142,6 @@ export default function DrivePicker() {
 
     return (
         <>
-
             <div className="d-flex flex-column justify-content-center">
                 <div className="button-group">
                     <div>
@@ -181,32 +183,55 @@ export default function DrivePicker() {
                     {
                         [...files].map((file_id, i) => {
                             return (
-                                <iframe
-                                    key={i}
-                                    id={`embed-${i}`}  // Unique ID for each iframe
-                                    title={`embed-${i}`}  // Unique title for accessibility
-                                    className='my-3'
-                                    width="300"
-                                    height="424"
-                                    src={`https://drive.google.com/file/d/${file_id}/preview?usp=drive_web`}  // Corrected src attribute
-                                    frameBorder="0"
-                                    allowFullScreen  // Optional: allows fullscreen capability
-                                ></iframe>
+                                <div className='position-relative d-flex'>
+                                    <iframe
+                                        key={i}
+                                        id={`embed-${i}`}  // Unique ID for each iframe
+                                        title={`embed-${i}`}  // Unique title for accessibility
+                                        className='my-3'
+                                        width="300"
+                                        height="424"
+                                        src={`https://drive.google.com/file/d/${file_id}/preview?usp=drive_web`}  // Corrected src attribute
+                                        frameBorder="0"
+                                        allowFullScreen  // Optional: allows fullscreen capability
+                                    >
+
+                                    </iframe>
+                                    <div className='position-absolute'>
+                                        <button
+                                            className='btn btn-danger'
+                                            onClick={() => handleURLDelete(file_id)}
+                                        >
+                                            <MdClose />
+                                        </button>
+                                    </div>
+                                </div>
                             );
                         })
                     }
                 </div>
                 <div className='d-flex flex-row gap-2 mx-2 overflow-x-auto'>
                     {localFiles.map(({ file, previewUrl }, index) => (
-                        <iframe
-                            key={index}
-                            title={file.name}
-                            src={previewUrl}
-                            width="300"
-                            height="424"
-                            frameBorder="0"
-                            style={{ margin: '10px' }}
-                        ></iframe>
+                        <div className='position-relative d-flex'>
+                            <iframe
+                                key={index}
+                                title={file.name}
+                                src={previewUrl}
+                                width="300"
+                                height="424"
+                                frameBorder="0"
+                                style={{ margin: '10px' }}
+                            >
+                            </iframe>
+                            <div className='position-absolute '>
+                                <button
+                                    className='btn btn-danger'
+                                    onClick={() => handleFileDelete(localFiles[index])}
+                                >
+                                    <MdClose />
+                                </button>
+                            </div>
+                        </div>
                     ))}
                 </div>
 
@@ -219,7 +244,7 @@ export default function DrivePicker() {
             </div>
             <div className="cloud-button-container">
                 <button className="upload-cloud-but" onClick={uploadFiles}>
-                    <img
+                    <img alt='cloud'
                         className="padded-logo-cloud"
                         src='https://cdn.icon-icons.com/icons2/3214/PNG/512/cloud_file_upload_server_icon_196427.png'>
                     </img>

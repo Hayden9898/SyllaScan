@@ -1,8 +1,5 @@
-import os
-
 from fastapi import FastAPI, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 from openai import OpenAI
 
