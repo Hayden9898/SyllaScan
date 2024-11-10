@@ -273,7 +273,6 @@ export default function DrivePicker() {
             <div className="cloud-button-container">
               <button className="upload-cloud-but" onClick={uploadFiles}>
                 <img alt='cloud'
-                  alt="cloud"
                   className="padded-logo-cloud"
                   src="https://cdn.icon-icons.com/icons2/3214/PNG/512/cloud_file_upload_server_icon_196427.png"
                 />
