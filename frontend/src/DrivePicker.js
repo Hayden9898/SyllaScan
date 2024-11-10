@@ -2,7 +2,6 @@ import useDrivePicker from "react-google-drive-picker";
 import { useState, useEffect } from "react";
 import { MdClose } from "react-icons/md";
 import { MdOutlineArrowCircleRight } from "react-icons/md";
-import { MdClose } from "react-icons/md";
 import SelectableBoxRow from "./BoxSelect.js";
 import "./css/DrivePicker.css";
 
@@ -213,10 +212,7 @@ export default function DrivePicker() {
                         })
                     }
                 </div>
-              </div>
-            );
-          })}
-        </div>
+            </div>
         <div className="d-flex flex-row gap-2 mx-2 overflow-x-auto">
           {localFiles.map(({ file, previewUrl }, index) => (
                         <div className='position-relative d-flex'>
@@ -286,7 +282,6 @@ export default function DrivePicker() {
             </div>
           </>
         )}
-      </div>
     </>
   );
 }
