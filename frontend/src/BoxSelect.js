@@ -1,12 +1,20 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import './css/App.css';
 import './css/SelectableRow.css'
 
 const SelectableBoxRow = () => {
-  const [selectedBox, setSelectedBox] = useState(null);
+  const [selectedBoxes, setSelectedBoxes] = useState(new Set());
 
-  const handleBoxClick = (index) => {
-    setSelectedBox(index);
+  const handleBoxClick = (info) => {
+    setSelectedBoxes((prevSelectedBoxes) => {
+      const newSelectedBoxes = new Set(prevSelectedBoxes);
+      if (prevSelectedBoxes.has(info.description)) {
+        newSelectedBoxes.delete(info.description);
+      } else {
+        newSelectedBoxes.add(info.description);
+      }
+      return newSelectedBoxes;
+    });
   };
 
   // Array to hold the data for each box
@@ -22,12 +30,12 @@ const SelectableBoxRow = () => {
       {boxInfo.map((info, index) => (
         <div
           key={index}
-          className={`box ${selectedBox === index ? 'selected' : ''}`}
-          onClick={() => handleBoxClick(index)}
+          className={`box ${selectedBoxes.has(info.description) ? 'selected' : ''}`}
+          onClick={() => handleBoxClick(info)}
           style={{
             backgroundColor: info.bgColor,
             padding: '20px',
-            border: selectedBox === index ? '3px solid black' : '1px solid #ccc',
+            border: selectedBoxes.has(info.description) ? '3px solid black' : '1px solid #ccc',
             cursor: 'pointer',
           }}
         >
@@ -40,4 +48,4 @@ const SelectableBoxRow = () => {
   );
 };
 
-  export default SelectableBoxRow;
+export default SelectableBoxRow;
