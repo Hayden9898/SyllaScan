@@ -23,15 +23,12 @@ app.add_middleware(
 )
 
 
-def cleanup_resources(vector_store_id: str, assistant_id: str, thread_id: str):
+def cleanup_resources(vector_store_id: str, assistant_id: str, thread_id: str, file_batch_id: str):
     # Delete all files associated with the vector store
     if vector_store_id:
-        # List files in the vector store
         file_list = client.beta.vector_stores.file_batches.list_files(
-            vector_store_id=vector_store_id
+            vector_store_id=vector_store_id, batch_id=file_batch_id
         )
-
-        # Delete each file
         for file in file_list.data:
             client.files.delete(file.id)
 
@@ -68,7 +65,7 @@ async def upload(request: Request, file: UploadFile = None, background_tasks: Ba
 
     assistant = client.beta.assistants.create(
         name=name,
-        instructions="You are an intelligent data parser designed to extract and organize schedule-related information from PDFs, Word documents, and text files. Your task is to analyze these files, identify key details such as course names, dates, times, and locations, and compile this data into a structured student schedule format that is easy to understand and use. Ensure accuracy in parsing and logical organization of the schedule information. Should there be no information to extract, return the word \"None\" and nothing else along with it. Otherwise, return the schedule in json text format without the ```json * ```, without newlines and with no other text, [{Title: [Course Name], Date: [Date], Time: [Time], Location: [Location], Description: [Description], MiscInfo: [Misc. Info]}]. Should a field have no information to extract, return null in place.",
+        instructions="You are an intelligent data parser designed to extract and organize schedule-related information from PDFs, Word documents, and text files. Your task is to analyze these files, identify key details such as course names, dates, times, and locations, and compile this data into a structured student schedule format that is easy to understand and use. Ensure accuracy in parsing and logical organization of the schedule information. Should there be no information to extract, return \"[]\" and nothing else along with it. Otherwise, return the schedule in json text format without the ```json * ```, without newlines and with no other text, [{Title: [Course Name], Date: [Date], Time: [Time], Location: [Location], Description: [Description], MiscInfo: [Misc. Info]}]. Should a field have no information to extract, return null in place.",
         model="gpt-4o",
         tools=[{"type": "file_search"}],
     )
@@ -115,7 +112,10 @@ async def upload(request: Request, file: UploadFile = None, background_tasks: Ba
 
     messages = client.beta.threads.messages.list(thread_id=thread.id, run_id=run.id)
     message_content = messages.data[0].content[0].text
-    response = json.loads(message_content.value)
+    try:
+        response = json.loads(message_content.value)
+    except json.JSONDecodeError:
+        response = message_content.value
 
     print(response)
 
@@ -134,7 +134,7 @@ async def upload(request: Request, file: UploadFile = None, background_tasks: Ba
     make_calendar_events()
 
     background_tasks.add_task(
-        cleanup_resources, vector_store.id, assistant.id, thread.id
+        cleanup_resources, vector_store.id, assistant.id, thread.id, file_batch.id
     )
 
     return {
