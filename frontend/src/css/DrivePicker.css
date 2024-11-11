@@ -114,3 +114,7 @@
     position: relative;   
     z-index: 1;         
 }
+  .centered-icon-button svg {
+
+    margin-top: -5px;
+  }
