@@ -272,7 +272,7 @@ export default function DrivePicker() {
             </div>
             <div className="position-absolute ">
               <button
-                className="btn btn-danger"
+                className="btn btn-danger centered-icon-button"
                 onClick={() => handleFileDelete(localFiles[index])}
               >
                 <MdClose />
