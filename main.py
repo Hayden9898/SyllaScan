@@ -1,5 +1,6 @@
 import io
 import json
+from typing import List
 from uuid import uuid4
 from fastapi import FastAPI, HTTPException, Request, UploadFile, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,12 +19,14 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-def cleanup_resources(vector_store_id: str, assistant_id: str, thread_id: str, file_batch_id: str):
+def cleanup_resources(
+    vector_store_id: str, assistant_id: str, thread_id: str, file_batch_id: str
+):
     # Delete all files associated with the vector store
     if vector_store_id:
         file_list = client.beta.vector_stores.file_batches.list_files(
@@ -46,36 +49,48 @@ def cleanup_resources(vector_store_id: str, assistant_id: str, thread_id: str, f
 
 # need to accept only .txt, .docx, .pdf files
 @app.post("/upload", response_model=dict)
-async def upload(request: Request, file: UploadFile = None, background_tasks: BackgroundTasks = None):
-    if file is None or file.filename == "":
-        return HTTPException(status_code=400, detail="No valid file part found")
+async def upload(
+    request: Request,
+    files: List[UploadFile] = None,
+    background_tasks: BackgroundTasks = None,
+):
+    if files is None:
+        raise HTTPException(status_code=400, detail="No files uploaded")
 
-    # Handle file upload scenario
-    if not (
-        file.filename.endswith(".txt")
+    # filter out files that are not .txt, .docx, or .pdf
+    files = [
+        file
+        for file in files
+        if file.filename.endswith(".txt")
         or file.filename.endswith(".docx")
         or file.filename.endswith(".pdf")
-    ):
-        return HTTPException(status_code=415, detail="File type not supported")
+    ]
 
-    name = str(uuid4())
-    file_content = file.file.read()  # Read file bytes
-    temp_file = io.BytesIO(file_content)
-    temp_file.name = file.filename
+    if not files:
+        raise HTTPException(status_code=400, detail="No valid files uploaded")
+
+    instance_name = str(uuid4())
+
+    temp_files = []
+    for file in files:
+        file_content = file.file.read()
+        temp_file = io.BytesIO(file_content)
+        temp_file.name = file.filename
+        temp_files.append(temp_file)
 
     assistant = client.beta.assistants.create(
-        name=name,
-        instructions="You are an intelligent data parser designed to extract and organize schedule-related information from PDFs, Word documents, and text files. Your task is to analyze these files, identify key details such as course names, dates, times, and locations, and compile this data into a structured student schedule format that is easy to understand and use. Ensure accuracy in parsing and logical organization of the schedule information. Should there be no information to extract, return \"[]\" and nothing else along with it. Otherwise, return the schedule in json text format without the ```json * ```, without newlines and with no other text, [{Title: [Course Name], Date: [Date], Time: [Time], Location: [Location], Description: [Description], MiscInfo: [Misc. Info]}]. Should a field have no information to extract, return null in place.",
+        name=instance_name,
+        instructions='You are an intelligent data parser designed to extract and organize schedule-related information from PDFs, Word documents, and text files. Your task is to analyze these files, identify key details such as course names, dates, times, and locations, and compile this data into a structured student schedule format that is easy to understand and use. Ensure accuracy in parsing and logical organization of the schedule information. Should there be no information to extract, return "[]" and nothing else along with it. Otherwise, return the schedule in json text format without the ```json * ```, without newlines and with no other text, [{Title: [Course Name], Date: [Date], Time: [Time], Location: [Location], Description: [Description], MiscInfo: [Misc. Info]}]. Should a field have no information to extract, return null in place.',
         model="gpt-4o",
         tools=[{"type": "file_search"}],
     )
 
-    vector_store = client.beta.vector_stores.create(name=name)
+    vector_store = client.beta.vector_stores.create(name=instance_name)
 
     # Use the upload and poll SDK helper to upload the files, add them to the vector store,
     # and poll the status of the file batch for completion.
     file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
-        vector_store_id=vector_store.id, files=[temp_file]
+        vector_store_id=vector_store.id, files=temp_files
     )
 
     # Check if the batch upload was successful
@@ -96,7 +111,7 @@ async def upload(request: Request, file: UploadFile = None, background_tasks: Ba
         messages=[
             {
                 "role": "user",
-                "content": "Extract and organize schedule-related information."
+                "content": "Extract and organize schedule-related information.",
             }
         ]
     )
@@ -138,7 +153,7 @@ async def upload(request: Request, file: UploadFile = None, background_tasks: Ba
     )
 
     return {
-        "filename": file.filename,
+        "filenames": [file.filename for file in files],
         "schedule_content": {
             "annotations": annotations,
             "value": message_content.value,
@@ -146,6 +161,13 @@ async def upload(request: Request, file: UploadFile = None, background_tasks: Ba
         "citations": citations,
         "response": response,
     }
+
+
+@app.get("/get_files", response_model=dict)
+async def get_files(request: Request, fileLinks: List[str] = None):
+    if fileLinks is None:
+        raise HTTPException(status_code=400, detail="No file links provided")
+    return {"fileLinks": fileLinks}
 
 
 def make_calendar_events():
