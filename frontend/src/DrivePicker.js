@@ -14,8 +14,8 @@ export default function DrivePicker() {
     const [authToken, setAuthToken] = useState(null);
     const [openPicker, authRes] = useDrivePicker();
     const [showExportOptions, setShowExportOptions] = useState(false);
-  const [currentScreen, setCurrentScreen] = useState("picker");
-  const [message, setMessage] = useState("Processing Files...");
+    const [currentScreen, setCurrentScreen] = useState("picker");
+    const [message, setMessage] = useState("Processing Files...");
 
     useEffect(() => {
         if (authRes) {
@@ -31,33 +31,33 @@ export default function DrivePicker() {
         };
     }, [localFiles]);
 
-  function handleFileUpload(event) {
-    const fileInput = event.target;
-    const files = Array.from(event.target.files);
-    if (files.length === 0) return;
+    function handleFileUpload(event) {
+        const fileInput = event.target;
+        const files = Array.from(event.target.files);
+        if (files.length === 0) return;
 
-    const newFiles = files.map(file => ({
-      file,
-      previewUrl: URL.createObjectURL(file),
-    }));
+        const newFiles = files.map(file => ({
+            file,
+            previewUrl: URL.createObjectURL(file),
+        }));
 
-    setLocalFiles((prevFiles) => {
-      const existingFileNames = new Set(prevFiles.map(f => f.file.name));
-      const filteredFiles = newFiles.filter(newFile => !existingFileNames.has(newFile.file.name));
-      return [...prevFiles, ...filteredFiles];
-    });
+        setLocalFiles((prevFiles) => {
+            const existingFileNames = new Set(prevFiles.map(f => f.file.name));
+            const filteredFiles = newFiles.filter(newFile => !existingFileNames.has(newFile.file.name));
+            return [...prevFiles, ...filteredFiles];
+        });
 
-    fileInput.value = "";
-  }
+        fileInput.value = "";
+    }
 
     function handleURLDelete(url) {
         setFileLinks((prevFiles) => prevFiles.filter((f) => f !== url));
     }
 
-  function handleFileDelete(file) {
-    URL.revokeObjectURL(file.previewUrl); // Revoke URL to free memory
-    setLocalFiles((prevFiles) => prevFiles.filter(f => f.file.name !== file.file.name));
-  }
+    function handleFileDelete(file) {
+        URL.revokeObjectURL(file.previewUrl); // Revoke URL to free memory
+        setLocalFiles((prevFiles) => prevFiles.filter(f => f.file.name !== file.file.name));
+    }
 
     function handleFileDeleteAll() {
         setFileLinks(new Set());
@@ -117,8 +117,8 @@ export default function DrivePicker() {
 
         setShowExportOptions(false);
         handleFileDeleteAll();
-      setCurrentScreen("processing");
-  }
+        setCurrentScreen("processing");
+    }
 
     const handleOpenPicker = () => {
         openPicker({
@@ -144,91 +144,91 @@ export default function DrivePicker() {
         });
     };
 
-  useEffect(() => {
-    if (currentScreen === "processing") {
-      // Define the sequence of messages
-      const messages = ["Processing Files...", "Scanning Documents...", "Finalizing..."];
-      let index = 0;
+    useEffect(() => {
+        if (currentScreen === "processing") {
+            // Define the sequence of messages
+            const messages = ["Processing Files...", "Scanning Documents...", "Finalizing..."];
+            let index = 0;
 
-      // Set up intervals to change the message every 2 seconds (2000 ms)
-      const interval = setInterval(() => {
-        index += 1;
-        if (index < messages.length) {
-          setMessage(messages[index]);
-        } else {
-          clearInterval(interval); // Clear the interval once the sequence is complete
+            // Set up intervals to change the message every 2 seconds (2000 ms)
+            const interval = setInterval(() => {
+                index += 1;
+                if (index < messages.length) {
+                    setMessage(messages[index]);
+                } else {
+                    clearInterval(interval); // Clear the interval once the sequence is complete
+                }
+            }, 5000);
+            return () => clearInterval(interval);
         }
-      }, 5000);
-      return () => clearInterval(interval); 
+    }, [currentScreen]);
+
+
+    if (currentScreen === "processing") {
+        return (
+            <>
+                <div class="center-components">
+                    <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                    <h1 class="processing-title">{message}</h1>
+                </div>
+            </>
+        );
     }
-  }, [currentScreen]);
-
-
-  if (currentScreen === "processing") {
     return (
-      <>
-        <div class="center-components">
-          <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
-          <h1 class="processing-title">{message}</h1>
-        </div>
-      </>
-    );
-  }
-  return (
-    <>
-      <div className="d-flex flex-column justify-content-center">
-        <div className="button-group">
-          <div>
-            <div className="upload-but">
-              <label htmlFor="file-upload" className="btn btn-info bg-white text-black m-0 align-items-center h-100">
-                <img
-                  className="padded-logo"
-                  src="https://cdn-icons-png.flaticon.com/512/2810/2810455.png"
-                  alt="upload"
-                />
-                Local Upload
-                <p id="upload-filename" className="d-none"></p>
-              </label>
-            </div>
-            <input
-              accept='application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/docx, .docx, .xlsx, .xls, .pdf, .doc, .txt, .rtf, .xml'
-              type="file"
-              id="file-upload"
-              style={{ display: "none" }}
-              onChange={handleFileUpload}
-            />
+        <>
+            <div className="d-flex flex-column justify-content-center">
+                <div className="button-group">
+                    <div>
+                        <div className="upload-but">
+                            <label htmlFor="file-upload" className="btn btn-info bg-white text-black m-0 align-items-center h-100">
+                                <img
+                                    className="padded-logo"
+                                    src="https://cdn-icons-png.flaticon.com/512/2810/2810455.png"
+                                    alt="upload"
+                                />
+                                Local Upload
+                                <p id="upload-filename" className="d-none"></p>
+                            </label>
+                        </div>
+                        <input
+                            accept='application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/docx, .docx, .xlsx, .xls, .pdf, .doc, .txt, .rtf, .xml'
+                            type="file"
+                            id="file-upload"
+                            style={{ display: "none" }}
+                            onChange={handleFileUpload}
+                        />
 
-          </div>
+                    </div>
 
-          <div>
-            <div className="upload-but">
-              <button className="btn btn-info bg-white text-black gap-1 align-items-center" onClick={handleOpenPicker}>
-                <img
-                  className="padded-logo"
-                  src="https://imgs.search.brave.com/oMwyxbNaJljh7kuYGRIsUmuNijirC2PBKnkVDDxGMPA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9rc3Rh/dGljLmdvb2dsZXVz/ZXJjb250ZW50LmNv/bS9maWxlcy9kNTdi/MjQxMDZjMzRjN2U1/MGVmM2Q5ODQyM2I5/NGRkYWYzNWFkMmRh/NzNhOWI5ZDRkMTJm/NTJkYmI5ZGQ0YzA4/YzI5NTdmNjI1NWFi/ODY5MGQ1ZWYwYjMy/Y2ZmODI4N2UwOTU3/N2QwNWU0NzlkMjYz/ZTg3MjE2MGM0Yzll/ODM2Mw"
-                  alt="google drive"
-                />
-                Upload from Google Drive
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className='d-flex flex-row gap-2 mx-2 overflow-x-auto'>
-          {
-            [...fileLinks].map((file_id, i) => {
-              return (
-                <div className='position-relative d-flex'>
-                  <iframe
-                    key={i}
-                    id={`embed-${i}`}  // Unique ID for each iframe
-                    title={`embed-${i}`}  // Unique title for accessibility
-                    className='my-3'
-                    width="300"
-                    height="424"
-                    src={`https://drive.google.com/file/d/${file_id}/preview?usp=drive_web`}  // Corrected src attribute
-                    frameBorder="0"
-                    allowFullScreen  // Optional: allows fullscreen capability
-                  >
+                    <div>
+                        <div className="upload-but">
+                            <button className="btn btn-info bg-white text-black gap-1 align-items-center" onClick={handleOpenPicker}>
+                                <img
+                                    className="padded-logo"
+                                    src="https://imgs.search.brave.com/oMwyxbNaJljh7kuYGRIsUmuNijirC2PBKnkVDDxGMPA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9rc3Rh/dGljLmdvb2dsZXVz/ZXJjb250ZW50LmNv/bS9maWxlcy9kNTdi/MjQxMDZjMzRjN2U1/MGVmM2Q5ODQyM2I5/NGRkYWYzNWFkMmRh/NzNhOWI5ZDRkMTJm/NTJkYmI5ZGQ0YzA4/YzI5NTdmNjI1NWFi/ODY5MGQ1ZWYwYjMy/Y2ZmODI4N2UwOTU3/N2QwNWU0NzlkMjYz/ZTg3MjE2MGM0Yzll/ODM2Mw"
+                                    alt="google drive"
+                                />
+                                Upload from Google Drive
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div className='d-flex flex-row gap-2 mx-2 overflow-x-auto'>
+                    {
+                        [...fileLinks].map((file_id, i) => {
+                            return (
+                                <div className='position-relative d-flex'>
+                                    <iframe
+                                        key={i}
+                                        id={`embed-${i}`}  // Unique ID for each iframe
+                                        title={`embed-${i}`}  // Unique title for accessibility
+                                        className='my-3'
+                                        width="300"
+                                        height="424"
+                                        src={`https://drive.google.com/file/d/${file_id}/preview?usp=drive_web`}  // Corrected src attribute
+                                        frameBorder="0"
+                                        allowFullScreen  // Optional: allows fullscreen capability
+                                    >
 
                                     </iframe>
                                     <div className='position-absolute'>
@@ -280,39 +280,39 @@ export default function DrivePicker() {
                 ))}
             </div>
 
-          {(fileLinks.size > 0 || localFiles.length > 0) && (
-              <div className="continue-button-container">
-                  <button
-                      className="continue-button-but"
-                      onClick={() => setShowExportOptions(true)}
-                  >
-                      <span>
-                          {" "}
-                          Continue
-                          <MdOutlineArrowCircleRight className="continue-right-arrow" />
-                      </span>
-                  </button>
-              </div>
-          )}
-          {showExportOptions && (
-              <>
-                  <h1 style={{ textAlign: "center" }}>
-                      Select a platform to export to
-                  </h1>
-                  <div>
-                      <SelectableBoxRow />
-                  </div>
-                  <div className="cloud-button-container">
-                      <button className="upload-cloud-but" onClick={uploadFiles}>
-                          <img alt='cloud'
-                              className="padded-logo-cloud"
-                              src="https://cdn.icon-icons.com/icons2/3214/PNG/512/cloud_file_upload_server_icon_196427.png"
-                          />
-                          Upload
-                      </button>
-                  </div>
-              </>
-          )}
+            {(fileLinks.size > 0 || localFiles.length > 0) && (
+                <div className="continue-button-container">
+                    <button
+                        className="continue-button-but"
+                        onClick={() => setShowExportOptions(true)}
+                    >
+                        <span>
+                            {" "}
+                            Continue
+                            <MdOutlineArrowCircleRight className="continue-right-arrow" />
+                        </span>
+                    </button>
+                </div>
+            )}
+            {showExportOptions && (
+                <>
+                    <h1 style={{ textAlign: "center" }}>
+                        Select a platform to export to
+                    </h1>
+                    <div>
+                        <SelectableBoxRow />
+                    </div>
+                    <div className="cloud-button-container">
+                        <button className="upload-cloud-but" onClick={uploadFiles}>
+                            <img alt='cloud'
+                                className="padded-logo-cloud"
+                                src="https://cdn.icon-icons.com/icons2/3214/PNG/512/cloud_file_upload_server_icon_196427.png"
+                            />
+                            Upload
+                        </button>
+                    </div>
+                </>
+            )}
         </>
     );
 }
