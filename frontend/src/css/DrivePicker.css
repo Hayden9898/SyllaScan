@@ -114,7 +114,10 @@
     position: relative;   
     z-index: 1;         
 }
-  .centered-icon-button svg {
-
-    margin-top: -5px;
-  }
+.btn.btn-danger{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 50%;
+}
