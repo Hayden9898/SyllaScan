@@ -259,14 +259,6 @@ export default function DrivePicker() {
                                 style={{ margin: "10px" }}
                             >
                             </iframe>
-                            <div className='position-absolute '>
-                                <button
-                                    className='btn btn-danger'
-                                    onClick={() => handleFileDelete(localFiles[index])}
-                                >
-                                    <MdClose />
-                                </button>
-                            </div>
                         </div>
                         <div className="position-absolute ">
                             <button

@@ -6,14 +6,20 @@ function App() {
   return (
     <>
       <Nav />
-      <div className="container" style={{ width: 500 }}>
-        <h1>Title of projects</h1>
-        <p style={{ textAlign: "center" }} >
-          The purpose of this application is to make scheduling important school
-          events much easier for students by just uploading a pdf and the rest is
-          handled and your calendar is updated
-        </p>
+      <div className='wrapper-container'>
+        <div className="about-container" style={{ width: 500 }}>
+          <div className = "text-container">
+          <div className="title">Syllabus Scanner</div>
+          <i><div className="slogan-text">"Conquering Procrastination, one deadline at a time."</div></i>
+          <p className="about-text" >
+            The purpose of this application is to make scheduling important events in a student's course syllabus to ensure you never miss an important
+            assignment, quiz, test, mid-term, or any important class event. We also strive to give you constant reminders to start studying for tests
+            or complete assignments early, so you are always prepared.
+          </p>
+          </div>
+        </div>
       </div>
+      {/*implement about us*/}
       <DrivePicker />
     </>
   );
