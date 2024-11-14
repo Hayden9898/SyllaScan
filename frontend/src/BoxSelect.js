@@ -3,18 +3,10 @@ import './css/App.css';
 import './css/SelectableRow.css'
 
 const SelectableBoxRow = () => {
-  const [selectedBoxes, setSelectedBoxes] = useState(new Set());
+  const [selectedBox, setSelectedBox] = useState(null);
 
   const handleBoxClick = (info) => {
-    setSelectedBoxes((prevSelectedBoxes) => {
-      const newSelectedBoxes = new Set(prevSelectedBoxes);
-      if (prevSelectedBoxes.has(info.description)) {
-        newSelectedBoxes.delete(info.description);
-      } else {
-        newSelectedBoxes.add(info.description);
-      }
-      return newSelectedBoxes;
-    });
+    setSelectedBox(info.description);
   };
 
   // Array to hold the data for each box
@@ -30,12 +22,12 @@ const SelectableBoxRow = () => {
       {boxInfo.map((info, index) => (
         <div
           key={index}
-          className={`box ${selectedBoxes.has(info.description) ? 'selected' : ''}`}
+          className={`box ${selectedBox === info.description ? 'selected' : ''}`}
           onClick={() => handleBoxClick(info)}
           style={{
             backgroundColor: info.bgColor,
             padding: '20px',
-            border: selectedBoxes.has(info.description) ? '3px solid black' : '1px solid #ccc',
+            border: selectedBox === info.description ? '3px solid black' : '1px solid #ccc',
             cursor: 'pointer',
           }}
         >
