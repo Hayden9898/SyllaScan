@@ -6,6 +6,7 @@ import ButtonGroup from "./ButtonGroup.jsx";
 import "../css/DrivePicker.css";
 import "../css/LoadingScreen.css";
 import FilePreview from "./FilePreview.jsx";
+import Loader from "./Loader.js";
 // TODO: Add ability to upload multiple files
 
 export default function DrivePicker() {
@@ -175,17 +176,7 @@ export default function DrivePicker() {
 
 	if (currentScreen === "processing") {
 		return (
-			<>
-				<div className="center-components">
-					<div className="lds-ring">
-						<div></div>
-						<div></div>
-						<div></div>
-						<div></div>
-					</div>
-					<h1 className="processing-title">{message}</h1>
-				</div>
-			</>
+			<Loader message={message} />
 		);
 	}
 	return (
