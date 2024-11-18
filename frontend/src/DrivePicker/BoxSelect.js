@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import './css/App.css';
-import './css/SelectableRow.css'
+import '../css/App.css';
+import '../css/SelectableRow.css'
 
 const SelectableBoxRow = () => {
   const [selectedBox, setSelectedBox] = useState(null);
