@@ -61,11 +61,17 @@
   .title{
     font-size: x-large;
     font-weight: 700;
+    text-shadow:     
+    1.5px 1.5px 0 black, 
+    -1.5px 1.5px 0 black, 
+    1.5px -1.5px 0 black, 
+    -1.5px -1.5px 0 black;;
     
   }
   .slogan-text{
     font-size:large;
     font-weight: 600;
+
   }
   .about-text{
     
