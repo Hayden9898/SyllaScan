@@ -1,4 +1,4 @@
-import '../css/LoaderScreen.css';
+import '../css/LoadingScreen.css';
 
 export default function Loader({message}) {
     return (
