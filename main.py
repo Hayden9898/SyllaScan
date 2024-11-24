@@ -153,6 +153,7 @@ async def upload(
     )
 
     return {
+        "ok": True,
         "filenames": [file.filename for file in files],
         "schedule_content": {
             "annotations": annotations,

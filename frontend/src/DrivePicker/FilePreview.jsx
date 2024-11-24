@@ -3,9 +3,19 @@ import { MdClose } from "react-icons/md";
 export default function FilePreview({
 	fileLinks,
 	localFiles,
-	handleURLDelete,
-	handleFileDelete,
+	setFileLinks,
+	setLocalFiles,
 }) {
+	function handleURLDelete(url) {
+		setFileLinks((prevFiles) => prevFiles.filter((f) => f !== url));
+	}
+
+	function handleFileDelete(file) {
+		URL.revokeObjectURL(file.previewUrl); // Revoke URL to free memory
+		setLocalFiles((prevFiles) =>
+			prevFiles.filter((f) => f.file.name !== file.file.name)
+		);
+	}
 	return (
 		<>
 			<div className="d-flex flex-row gap-2 mx-2 overflow-x-auto">

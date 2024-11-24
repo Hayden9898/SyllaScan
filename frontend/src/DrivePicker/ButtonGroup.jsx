@@ -1,4 +1,67 @@
-export default function ButtonGroup({handleFileUpload, handleOpenPicker}) {
+import React, { useEffect } from "react";
+import useDrivePicker from "react-google-drive-picker";
+
+export default function ButtonGroup({
+	setLocalFiles,
+	authToken,
+	setFileLinks,
+	fileLinks,
+	setAuthToken,
+}) {
+	const [openPicker, authRes] = useDrivePicker();
+	useEffect(() => {
+		if (authRes) {
+			setAuthToken(authRes.access_token);
+		}
+	}, [authRes]);
+
+	function handleFileUpload(event) {
+		const fileInput = event.target;
+		const files = Array.from(event.target.files);
+		if (files.length === 0) return;
+
+		const newFiles = files.map((file) => ({
+			file,
+			previewUrl: URL.createObjectURL(file),
+		}));
+
+		setLocalFiles((prevFiles) => {
+			const existingFileNames = new Set(
+				prevFiles.map((f) => f.file.name)
+			);
+			const filteredFiles = newFiles.filter(
+				(newFile) => !existingFileNames.has(newFile.file.name)
+			);
+			return [...prevFiles, ...filteredFiles];
+		});
+
+		fileInput.value = "";
+	}
+
+	const handleOpenPicker = () => {
+		openPicker({
+			clientId: process.env.REACT_APP_CLIENT_ID,
+			developerKey: process.env.REACT_APP_API_KEY,
+			token: authToken,
+			viewId: "DOCS",
+			showUploadView: true,
+			showUploadFolders: true,
+			supportDrives: true,
+			multiselect: true,
+			callbackFunction: (data) => {
+				if (data.action === "cancel") {
+					console.log("User clicked cancel/close button");
+				}
+				console.log(data);
+				if (data.action === "picked") {
+					const document = data.docs[0];
+					const fileId = document.id;
+					setFileLinks([...fileLinks, fileId]);
+				}
+			},
+		});
+	};
+
 	return (
 		<div className="button-group">
 			<div>
