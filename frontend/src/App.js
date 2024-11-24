@@ -2,9 +2,9 @@ import { useState } from 'react';
 
 import DrivePicker from './DrivePicker/DrivePicker';
 import Nav from './Nav';
-import SelectableBoxRow from './DrivePicker/BoxSelect';
-
-import { uploadFiles } from './ExportPage/functions';
+import ExportPage from './ExportPage/page';
+import Results from './Results/page';
+import Loader from './DrivePicker/Loader';
 
 import './css/App.css';
 
@@ -51,41 +51,26 @@ function App() {
       }
       {
         screen === 'export' &&
-
-        <>
-          <h1 style={{ textAlign: "center" }}>
-            Select a platform to export to
-          </h1>
-          <SelectableBoxRow />
-          <div className="cloud-button-container">
-            <button
-              className="upload-cloud-but"
-              onClick={async () => {
-                const res = await uploadFiles(fileLinks, localFiles, authToken, setFileLinks, setLocalFiles);
-                console.log(res);
-                setResults(res.data);
-                if (res.ok) {
-                  setScreen('results');
-                }
-              }}>
-              <img
-                alt="cloud"
-                className="padded-logo-cloud"
-                src="https://cdn.icon-icons.com/icons2/3214/PNG/512/cloud_file_upload_server_icon_196427.png"
-              />
-              Upload
-            </button>
-          </div>
-        </>
+        <ExportPage
+          fileLinks={fileLinks}
+          setFileLinks={setFileLinks}
+          localFiles={localFiles}
+          setLocalFiles={setLocalFiles}
+          authToken={authToken}
+          setResults={setResults}
+          setScreen={setScreen}
+        />
+      }
+      {
+        screen === 'processing' &&
+        <Loader message={"Please wait for your results"} />
       }
       {
         screen === 'results' &&
-        <div>
-          <h1>Results</h1>
-          <div>
-            {results}
-          </div>
-        </div>
+        <Results
+          results={results}
+          setScreen={setScreen}
+        />
       }
     </>
   );

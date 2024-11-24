@@ -23,7 +23,7 @@ export async function uploadFiles(fileLinks, localFiles, authToken, setFileLinks
         // Cleanup and reset state
         handleFileDeleteAll(localFiles, fileLinks, setFileLinks, setLocalFiles);
 
-        return { ok: true, data: ret.data };
+        return { ok: true, data: ret };
     } catch (err) {
         console.error("Upload failed:", err);
         throw err;
