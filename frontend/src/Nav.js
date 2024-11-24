@@ -1,6 +1,8 @@
 import { FaLinkedin, FaGithub } from 'react-icons/fa';
+import Button from 'components/Button';
+import { handleSignOut } from 'DrivePicker/functions';
 
-export default function Nav() {
+export default function Nav({ authToken, setAuthToken, setScreen }) {
     return (
         <nav className="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
             <div className="container-fluid">
@@ -47,6 +49,9 @@ export default function Nav() {
                         <button className="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
                     </form>
                 </div>
+                {authToken &&
+                    <Button className="shadow-none" onClick={() => handleSignOut(authToken, setAuthToken, setScreen)}>Signout</Button>
+                }
             </div>
         </nav>
     );

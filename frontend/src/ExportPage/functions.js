@@ -8,7 +8,7 @@ export async function uploadFiles(fileLinks, localFiles, authToken, setFileLinks
 
     try {
         // Fetch files from links and append to formData
-        if (fileLinks && fileLinks.size > 0) {
+        if (fileLinks && fileLinks.length > 0) {
             await fetchFiles(Array.from(fileLinks), authToken, formData);
         }
 
@@ -49,24 +49,31 @@ async function uploadLocalFiles(localFiles, formData) {
 }
 
 async function fetchFiles(fileLinks, authToken, formData) {
-    const fileLinksArray = Array.from(fileLinks);
+    if (!fileLinks || fileLinks.length === 0) {
+        throw new Error("fileLinks must be a non-empty array");
+    }
+
     const response = await fetch("http://localhost:8000/get_files", {
         method: "POST",
         headers: {
             Authorization: `Bearer ${authToken}`,
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ fileLinksArray }),
+        body: JSON.stringify(fileLinks),
     });
+
 
     if (!response.ok) {
         throw new Error("Failed to fetch files from links");
     }
 
-    const { files } = await response.json();
-    files.forEach((file) => {
-        formData.append("files", file.file);
-    });
+    const body = await response.formData();
+    console.log(body)
+    if (body["success"]) {
+        body["success"].forEach((file) => {
+            formData.append("files", file.content);
+        });
+    }
 }
 
 function handleFileDeleteAll(localFiles, fileLinks, setFileLinks, setLocalFiles) {

@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { MdOutlineArrowCircleRight } from "react-icons/md";
+import { useEffect } from "react";
+
 import ButtonGroup from "./ButtonGroup.jsx";
-import "../css/DrivePicker.css";
 import FilePreview from "./FilePreview.jsx";
-import Loader from "./Loader.js";
+
+import "css/DrivePicker.css";
 
 export default function DrivePicker({
 	fileLinks,
@@ -14,9 +14,6 @@ export default function DrivePicker({
 	setAuthToken,
 	setScreen,
 }) {
-	const [currentScreen, setCurrentScreen] = useState("picker");
-	const [message, setMessage] = useState("Processing Files...");
-
 	useEffect(() => {
 		return () => {
 			localFiles.forEach(({ file, previewUrl }, index) => {
@@ -25,34 +22,8 @@ export default function DrivePicker({
 		};
 	}, [localFiles]);
 
-	useEffect(() => {
-		if (currentScreen === "processing") {
-			// Define the sequence of messages
-			const messages = [
-				"Processing Files...",
-				"Scanning Documents...",
-				"Finalizing...",
-			];
-			let index = 0;
-
-			// Set up intervals to change the message every 2 seconds (2000 ms)
-			const interval = setInterval(() => {
-				index += 1;
-				if (index < messages.length) {
-					setMessage(messages[index]);
-				} else {
-					clearInterval(interval); // Clear the interval once the sequence is complete
-				}
-			}, 5000);
-			return () => clearInterval(interval);
-		}
-	}, [currentScreen]);
-
-	if (currentScreen === "processing") {
-		return <Loader message={message} />;
-	}
 	return (
-		<>
+		<div className="">
 			<div className="d-flex flex-column justify-content-center">
 				<FilePreview
 					fileLinks={fileLinks}
@@ -66,22 +37,35 @@ export default function DrivePicker({
 					setFileLinks={setFileLinks}
 					fileLinks={fileLinks}
 					setAuthToken={setAuthToken}
-					setCurrentScreen={setCurrentScreen}
+					className={"absolute top-[75%]"}
 				/>
 			</div>
-			{(fileLinks.size > 0 || localFiles.length > 0) && (
+			{(fileLinks.length > 0 || localFiles.length > 0) && (
 				<div className="continue-button-container">
 					<button
-						className="continue-button-but"
+						style={{
+							position: "relative",
+							display: "inline-block",
+							cursor: "pointer",
+							outline: "none",
+							border: 0,
+							verticalAlign: "middle",
+							textDecoration: "none",
+							background: "transparent",
+							padding: 0,
+							fontSize: "inherit",
+							fontFamily: "inherit",
+						}}
+						className="continue"
 						onClick={() => setScreen("export")}
 					>
-						<span>
-							Continue
-							<MdOutlineArrowCircleRight className="continue-right-arrow" />
+						<span className="circle" aria-hidden="true">
+							<span className="icon arrow"></span>
 						</span>
+						<span className="button-text">Continue</span>
 					</button>
 				</div>
 			)}
-		</>
+		</div>
 	);
 }

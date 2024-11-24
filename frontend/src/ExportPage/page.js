@@ -1,5 +1,6 @@
 import SelectableBoxRow from "../DrivePicker/BoxSelect";
 import { uploadFiles } from "./functions";
+
 export default function ExportPage({ fileLinks, setFileLinks, localFiles, setLocalFiles, authToken, setResults, setScreen }) {
     return (
         <>
@@ -9,11 +10,10 @@ export default function ExportPage({ fileLinks, setFileLinks, localFiles, setLoc
             <SelectableBoxRow />
             <div className="cloud-button-container">
                 <button
-                    className="upload-cloud-but"
+                    className="upload-cloud-but flex items-center content-center"
                     onClick={async () => {
                         setScreen('processing');
                         const res = await uploadFiles(fileLinks, localFiles, authToken, setFileLinks, setLocalFiles);
-                        console.log(res);
                         if (res.ok) {
                             setResults(res.data);
                             setScreen('results');

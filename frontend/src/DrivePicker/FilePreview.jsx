@@ -16,22 +16,23 @@ export default function FilePreview({
 			prevFiles.filter((f) => f.file.name !== file.file.name)
 		);
 	}
+
 	return (
 		<>
 			<div className="d-flex flex-row gap-2 mx-2 overflow-x-auto">
 				{[...fileLinks].map((file_id, i) => {
 					return (
-						<div className="position-relative d-flex">
+						<div className="position-relative d-flex" key={`${file_id}_${i}`}>
 							<iframe
-								key={i}
-								id={`embed-${i}`} // Unique ID for each iframe
-								title={`embed-${i}`} // Unique title for accessibility
+								key={file_id+ '_' + i}
+								id={`embed-${i}`}
+								title={`embed-${i}`}
 								className="my-3"
 								width="300"
 								height="424"
-								src={`https://drive.google.com/file/d/${file_id}/preview?usp=drive_web`} // Corrected src attribute
+								src={`https://drive.google.com/file/d/${file_id}/preview?usp=drive_web`}
 								frameBorder="0"
-								allowFullScreen // Optional: allows fullscreen capability
+								allowFullScreen
 							></iframe>
 							<div className="position-absolute">
 								<button
@@ -50,7 +51,7 @@ export default function FilePreview({
 					<div className="position-relative d-flex" key={file.name}>
 						<div className="position-relative d-flex">
 							<iframe
-								key={index}
+								key={previewUrl + '_' + index}
 								title={file.name}
 								src={previewUrl}
 								width="300"

@@ -1,78 +1,72 @@
-.logoCol{
-    color:white;
-    text-decoration: none;
-    padding-right: 20px;
+.logoCol {
+	color: white;
+	text-decoration: none;
+	padding-right: 20px;
 }
 
 .box-row {
-    padding: 50px;
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-  }
-  
-  .box {
-    width: 150px;
-    height: 150px;
-    border: 1px solid black;
-    border-radius: 15px;
-    text-align: center;
-    cursor: pointer;
-    padding: 10px;
-    transition: transform ease 0.3s
-  }
-  .box:hover{
-    transform:scale(1.05)
-  }
-  
-  .selected {
-    background-color: lightblue;
-  }
-  
-  .wrapper-container{
-    padding:30px;
-    display: flex;
-    justify-content: center;
-    height:100%;
-    width:100%;
-  }
+	padding: 50px;
+	display: flex;
+	justify-content: center;
+	gap: 30px;
+}
 
-  .about-container{
-    border-radius: 10px;
-    position: relative;
-    width: 1000px !important;
-    height: 400px;
-    background-image: url('https://cdn.prod.website-files.com/5dc393eb429c1ad690f7818d/5f31693925e08a0d996e104d_man-being-productive-at-desk.jpg');
-    background-size: cover;
-    background-position: center;
-    opacity: 0.9;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 1rem;
-    color:white;
-  }
-  .text-container{
-    background-color: rgba(151, 151, 151, 0.7);
-    border-radius: 10px;
-    padding:10px;
-  }
+.box {
+	width: 150px;
+	height: 150px;
+	border: 1px solid black;
+	border-radius: 15px;
+	text-align: center;
+	cursor: pointer;
+	padding: 10px;
+	transition: transform ease 0.3s;
+}
+.box:hover {
+	transform: scale(1.05);
+}
 
-  .title{
-    font-size: x-large;
-    font-weight: 700;
-    text-shadow:     
-    1.5px 1.5px 0 black, 
-    -1.5px 1.5px 0 black, 
-    1.5px -1.5px 0 black, 
-    -1.5px -1.5px 0 black;;
-    
-  }
-  .slogan-text{
-    font-size:large;
-    font-weight: 600;
+.selected {
+	background-color: lightblue;
+}
 
-  }
-  .about-text{
-    
-  }
+.wrapper-container {
+	padding: 30px;
+	display: flex;
+	justify-content: center;
+	height: 100%;
+	width: 100%;
+}
+
+.about-container {
+	border-radius: 10px;
+	position: relative;
+	width: 1000px !important;
+	height: 400px;
+	background-image: url("https://cdn.prod.website-files.com/5dc393eb429c1ad690f7818d/5f31693925e08a0d996e104d_man-being-productive-at-desk.jpg");
+	background-size: cover;
+	background-position: center;
+	opacity: 0.9;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	padding: 1rem;
+	color: white;
+}
+.text-container {
+	background-color: rgba(151, 151, 151, 0.7);
+	border-radius: 10px;
+	padding: 10px;
+}
+
+.title {
+	font-size: x-large;
+	font-weight: 700;
+	text-shadow: 1.5px 1.5px 0 black, -1.5px 1.5px 0 black, 1.5px -1.5px 0 black,
+		-1.5px -1.5px 0 black;
+}
+.slogan-text {
+	font-size: large;
+	font-weight: 600;
+}
+.about-text {
+}

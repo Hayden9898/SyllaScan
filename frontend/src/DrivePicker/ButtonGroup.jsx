@@ -1,19 +1,23 @@
 import React, { useEffect } from "react";
 import useDrivePicker from "react-google-drive-picker";
 
+import Button from "components/Button";
+import Label from "components/Label";
+
 export default function ButtonGroup({
 	setLocalFiles,
 	authToken,
 	setFileLinks,
 	fileLinks,
 	setAuthToken,
+	className,
 }) {
 	const [openPicker, authRes] = useDrivePicker();
 	useEffect(() => {
 		if (authRes) {
 			setAuthToken(authRes.access_token);
 		}
-	}, [authRes]);
+	}, [authRes, setAuthToken]);
 
 	function handleFileUpload(event) {
 		const fileInput = event.target;
@@ -63,12 +67,12 @@ export default function ButtonGroup({
 	};
 
 	return (
-		<div className="button-group">
-			<div>
+		<div className={`button-group ${className}`}>
+			<div className="flex flex-nowrap">
 				<div className="upload-but">
-					<label
+					<Label
 						htmlFor="file-upload"
-						className="btn btn-info bg-white text-black m-0 align-items-center h-100"
+						className="btn btn-info bg-white text-black flex flex-nowrap justify-center items-center"
 					>
 						<img
 							className="padded-logo"
@@ -77,7 +81,7 @@ export default function ButtonGroup({
 						/>
 						Local Upload
 						<p id="upload-filename" className="d-none"></p>
-					</label>
+					</Label>
 				</div>
 				<input
 					accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/docx, .docx, .xlsx, .xls, .pdf, .doc, .txt, .rtf, .xml"
@@ -90,8 +94,8 @@ export default function ButtonGroup({
 
 			<div>
 				<div className="upload-but">
-					<button
-						className="btn btn-info bg-white text-black gap-1 align-items-center"
+					<Button
+						className="btn btn-info bg-white text-black gap-1 items-center flex flex-nowrap"
 						onClick={handleOpenPicker}
 					>
 						<img
@@ -100,7 +104,7 @@ export default function ButtonGroup({
 							alt="google drive"
 						/>
 						Upload from Google Drive
-					</button>
+					</Button>
 				</div>
 			</div>
 		</div>

@@ -3,9 +3,12 @@ import json
 from typing import List
 from uuid import uuid4
 from fastapi import FastAPI, HTTPException, Request, UploadFile, BackgroundTasks
+from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from openai import OpenAI
+from httpx import AsyncClient
+import uuid
 
 load_dotenv()
 
@@ -164,11 +167,83 @@ async def upload(
     }
 
 
-@app.get("/get_files", response_model=dict)
-async def get_files(request: Request, fileLinks: List[str] = None):
-    if fileLinks is None:
+@app.post("/get_files")
+async def get_files(request: Request):
+    files = await request.json()
+
+    if not files or not isinstance(files, list):
         raise HTTPException(status_code=400, detail="No file links provided")
-    return {"fileLinks": fileLinks}
+
+    authorization = request.headers.get("Authorization")
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Missing Authorization header")
+
+    # Prepare files for multipart response
+    multipart_data = []
+
+    async with AsyncClient() as client:
+        for file_id in files:
+            try:
+                metadata_response = await client.get(
+                    f"https://www.googleapis.com/drive/v3/files/{file_id}",
+                    headers={"Authorization": authorization},
+                    timeout=10.0,
+                )
+
+                if metadata_response.status_code != 200:
+                    continue  # Skip failed files
+
+                metadata = metadata_response.json()
+                mime_type = metadata.get("mimeType")
+                name = metadata.get("name", f"file_{uuid.uuid4()}")
+
+                if mime_type.startswith("application/vnd.google-apps."):
+                    # Export Google Docs Editors file
+                    export_format = (
+                        "application/pdf" if "document" in mime_type else "text/csv"
+                    )
+                    file_response = await client.get(
+                        f"https://www.googleapis.com/drive/v3/files/{file_id}/export?mimeType={export_format}",
+                        headers={"Authorization": authorization},
+                        timeout=10.0,
+                    )
+                else:
+                    # Fetch binary file
+                    file_response = await client.get(
+                        f"https://www.googleapis.com/drive/v3/files/{file_id}?alt=media",
+                        headers={"Authorization": authorization},
+                        timeout=10.0,
+                    )
+
+                if file_response.status_code == 200:
+                    multipart_data.append(
+                        {
+                            "filename": name,
+                            "content": file_response.content,
+                            "content_type": mime_type,
+                        }
+                    )
+
+            except Exception as e:
+                print(f"Error processing file {file_id}: {e}")
+                continue  # Skip failed files
+
+    # Create a generator for multipart response
+    # TODO: Get GPT to process files
+    async def file_stream():
+        boundary = f"boundary_{uuid.uuid4().hex}"
+        for file in multipart_data:
+            yield f"--{boundary}\r\n".encode()
+            yield f"Content-Disposition: form-data; name=\"files\"; filename=\"{file['filename']}\"\r\n".encode()
+            yield f"Content-Type: {file['content_type']}\r\n\r\n".encode()
+            yield file["content"]
+            yield b"\r\n"
+        yield f"--{boundary}--\r\n".encode()
+
+    return StreamingResponse(
+        file_stream(),
+        media_type="multipart/form-data",
+    )
 
 
 def make_calendar_events():

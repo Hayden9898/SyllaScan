@@ -1,123 +1,144 @@
-.horizontal-align{
-    justify-content: center;
+.horizontal-align {
+	justify-content: center;
 }
 .padded-logo {
-    padding: 2px;
-    padding-right: 10px;
-    width:40px
-    
+	padding: 2px;
+	padding-right: 10px;
+	width: 40px;
 }
 .padded-logo-cloud {
-    padding-right: 10px;
-    width:50px;
-    height:40px;
+	padding-right: 10px;
+	width: 50px;
+	height: 40px;
 }
-.upload-cloud-but{
-    justify-self: center;
-    padding: 8px 12px; 
-    background-color: white;
-    color: black;
-    border: 2px solid #7c8f8c;
-    border-radius: 8px;
-    max-width: fit-content; 
+.upload-cloud-but {
+	justify-self: center;
+	padding: 8px 12px;
+	background-color: white;
+	color: black;
+	border: 2px solid #7c8f8c;
+	border-radius: 8px;
+	max-width: fit-content;
 }
-.upload-cloud-but:hover{
-
-    background-color: rgb(208, 212, 210) !important;
-    transition: background-color 0.5s ease;
+.upload-cloud-but:hover {
+	background-color: rgb(208, 212, 210) !important;
+	transition: background-color 0.5s ease;
 }
 .cloud-button-container {
-    padding-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center; 
-    width: 100%; 
-    margin-top: 20px; 
+	padding-bottom: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	margin-top: 20px;
 }
 .upload-but .btn,
-.upload-but  label{
-    background-color:rgb(255, 255, 255) !important;
-    transition: background-color 0.5s ease;
+.upload-but label {
+	background-color: rgb(255, 255, 255) !important;
+	transition: background-color 0.5s ease;
 }
 
 .upload-but .btn:hover,
-.upload-but  label:hover{
-    background-color:rgb(134, 209, 243) !important;
+.upload-but label:hover {
+	background-color: rgb(134, 209, 243) !important;
 }
 
-.button-group{
-    padding-top: 20px;
-    padding-bottom: 40px;
-    display:flex;
-    flex-direction: row;
-    justify-content: center;
-    gap:40px;
+.button-group {
+	padding-top: 20px;
+	padding-bottom: 40px;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 40px;
 }
 
-.continue-button-container{
-    padding-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center; 
-    width: 100%; 
-    margin-top: 20px; 
+.continue-button-container {
+	padding: 20px 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	margin-top: 20px;
 }
 
-.continue-button-but{
-    position: relative;  
-    padding:10px;
-    padding-inline: 20px;
-    border-radius: 8px;
-    background: white;
-    border-color: rgb(92, 238, 245);
-    cursor: pointer;
-    overflow: hidden;
-    color: rgb(0, 0, 0);
-    transition: color 0.4s ease;
-}
-.continue-button-but::before{
-    content: "";                   
-    position: absolute;                
-    top: 0;                            
-    left: 0;                          
-    width: 0;                          
-    height: 100%;                      
-    background: rgb(187, 226, 47);     
-    transition: width 0.4s ease;       
-    z-index: 0;
+.btn.btn-danger {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 6px;
+	border-radius: 50%;
 }
 
-.continue-button-but:hover::before {
-    width: 100%;                    
-}
-.continue-button-but span {
-    position: relative;         
-    z-index: 1;                   
-    transition: color 0.4s ease;      
-}
-.continue-button-but:hover{
-    color:black;    
+button.continue {
+	width: 12rem;
+	height: auto;
 }
 
-@keyframes fillLeftToRight {
-    0% {
-        background-position: left;
-    }
-    100% {
-        background-position: right;
-    }
+button.continue .circle {
+	transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+	position: relative;
+	display: block;
+	margin: 0;
+	width: 3rem;
+	height: 3rem;
+	background: #282936;
+	border-radius: 1.625rem;
 }
-.continue-right-arrow{
-    font-size:40px;
-    padding-left: 10px;
-    align-self: right;  
-    position: relative;   
-    z-index: 1;         
+
+button.continue .circle .icon {
+	transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	background: #fff;
 }
-.btn.btn-danger{
-    display:flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px;
-    border-radius: 50%;
+
+button.continue .circle .icon.arrow {
+	transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+	left: 0.625rem;
+	width: 1.125rem;
+	height: 0.125rem;
+	background: none;
+}
+
+button.continue .circle .icon.arrow::before {
+	position: absolute;
+	content: "";
+	top: -0.29rem;
+	right: 0.0625rem;
+	width: 0.625rem;
+	height: 0.625rem;
+	border-top: 0.125rem solid #fff;
+	border-right: 0.125rem solid #fff;
+	transform: rotate(45deg);
+}
+
+button.continue .button-text {
+	transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 0.75rem 0;
+	margin: 0 0 0 1.85rem;
+	color: #282936;
+	font-weight: 700;
+	line-height: 1.6;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+button:hover .circle {
+	width: 100%;
+}
+
+button:hover .circle .icon.arrow {
+	background: #fff;
+	transform: translate(1rem, 0);
+}
+
+button:hover .button-text {
+	color: #fff;
 }
