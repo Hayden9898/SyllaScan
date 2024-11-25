@@ -3,7 +3,7 @@ export default function Results({ results, setScreen }) {
         <div>
             <h1>Results</h1>
             <div id="results">
-                {JSON.stringify(results.response, null, 2)}
+                {JSON.stringify(results, null, 2)}
             </div>
         </div>
     )

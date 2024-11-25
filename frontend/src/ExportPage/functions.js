@@ -1,6 +1,6 @@
 export async function uploadFiles(fileLinks, localFiles, authToken, setFileLinks, setLocalFiles) {
     const formData = new FormData();
-    let ret = null;
+    let ret = [];
 
     if ((!fileLinks || fileLinks.size === 0) && (!localFiles || localFiles.length === 0)) {
         throw new Error("No files to upload");
@@ -9,21 +9,20 @@ export async function uploadFiles(fileLinks, localFiles, authToken, setFileLinks
     try {
         // Fetch files from links and append to formData
         if (fileLinks && fileLinks.length > 0) {
-            await fetchFiles(Array.from(fileLinks), authToken, formData);
+            const res = await fetchFiles(Array.from(fileLinks), authToken);
+            ret = res.response;
         }
 
         // Append local files and upload
         if (localFiles && localFiles.length > 0) {
-            ret = await uploadLocalFiles(localFiles, formData);
-            if (!ret.ok) {
-                throw new Error("Failed to upload local files");
-            }
+            const res = await uploadLocalFiles(localFiles, formData);
+            ret = ret.concat(res.response);
         }
 
         // Cleanup and reset state
         handleFileDeleteAll(localFiles, fileLinks, setFileLinks, setLocalFiles);
 
-        return { ok: true, data: ret };
+        return { ok: ret.length > 0, data: ret };
     } catch (err) {
         console.error("Upload failed:", err);
         throw err;
@@ -44,11 +43,10 @@ async function uploadLocalFiles(localFiles, formData) {
         throw new Error("Failed to upload local files");
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
 }
 
-async function fetchFiles(fileLinks, authToken, formData) {
+async function fetchFiles(fileLinks, authToken) {
     if (!fileLinks || fileLinks.length === 0) {
         throw new Error("fileLinks must be a non-empty array");
     }
@@ -62,18 +60,11 @@ async function fetchFiles(fileLinks, authToken, formData) {
         body: JSON.stringify(fileLinks),
     });
 
-
     if (!response.ok) {
         throw new Error("Failed to fetch files from links");
     }
 
-    const body = await response.formData();
-    console.log(body)
-    if (body["success"]) {
-        body["success"].forEach((file) => {
-            formData.append("files", file.content);
-        });
-    }
+    return await response.json();
 }
 
 function handleFileDeleteAll(localFiles, fileLinks, setFileLinks, setLocalFiles) {

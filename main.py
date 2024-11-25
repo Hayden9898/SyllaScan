@@ -3,8 +3,8 @@ import json
 from typing import List
 from uuid import uuid4
 from fastapi import FastAPI, HTTPException, Request, UploadFile, BackgroundTasks
-from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from openai import OpenAI
 from httpx import AsyncClient
@@ -50,37 +50,135 @@ def cleanup_resources(
         client.beta.threads.delete(thread_id)
 
 
-# need to accept only .txt, .docx, .pdf files
 @app.post("/upload", response_model=dict)
 async def upload(
     request: Request,
     files: List[UploadFile] = None,
-    background_tasks: BackgroundTasks = None,
+    background_tasks: BackgroundTasks = None
 ):
     if files is None:
         raise HTTPException(status_code=400, detail="No files uploaded")
+    return await process_upload(files=files, background_tasks=background_tasks)
 
-    # filter out files that are not .txt, .docx, or .pdf
-    files = [
+
+@app.post("/get_files")
+async def get_files(request: Request, background_tasks: BackgroundTasks):
+    files = await request.json()
+
+    if not files or not isinstance(files, list):
+        raise HTTPException(status_code=400, detail="No file links provided")
+
+    authorization = request.headers.get("Authorization")
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Missing Authorization header")
+
+    temp_files = []
+
+    async with AsyncClient() as client:
+        for file_id in files:
+            try:
+                # Fetch metadata
+                metadata_response = await client.get(
+                    f"https://www.googleapis.com/drive/v3/files/{file_id}",
+                    headers={"Authorization": authorization},
+                    timeout=10.0,
+                )
+
+                if metadata_response.status_code != 200:
+                    print(f"Failed to fetch metadata for file_id: {file_id}")
+                    continue
+
+                metadata = metadata_response.json()
+                mime_type = metadata.get("mimeType", "application/octet-stream")
+                name = metadata.get("name", f"file_{uuid.uuid4()}")
+
+                # Determine export format for Google Workspace files
+                if mime_type.startswith("application/vnd.google-apps."):
+                    export_format = None
+                    if "document" in mime_type:
+                        export_format = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"  # .docx
+                        name = name if name.endswith(".docx") else name + ".docx"
+                    elif "spreadsheet" in mime_type:
+                        export_format = "text/csv"  # .csv
+                        name = name if name.endswith(".csv") else name + ".csv"
+                    elif "presentation" in mime_type:
+                        export_format = "application/vnd.openxmlformats-officedocument.presentationml.presentation"  # .pptx
+                        name = name if name.endswith(".pptx") else name + ".pptx"
+
+                    if export_format:
+                        file_response = await client.get(
+                            f"https://www.googleapis.com/drive/v3/files/{file_id}/export?mimeType={export_format}",
+                            headers={"Authorization": authorization},
+                            timeout=10.0,
+                        )
+                    else:
+                        print(
+                            f"Unsupported Google Workspace file type for file_id: {file_id}"
+                        )
+                        continue
+                else:
+                    # Fetch binary file
+                    file_response = await client.get(
+                        f"https://www.googleapis.com/drive/v3/files/{file_id}?alt=media",
+                        headers={"Authorization": authorization},
+                        timeout=10.0,
+                    )
+
+                if file_response.status_code == 200:
+                    # Prepare file as UploadFile for process_upload
+                    temp_file = io.BytesIO(file_response.content)
+                    temp_file.name = name
+                    upload_file = UploadFile(file=temp_file, filename=name)
+                    temp_files.append(upload_file)
+                else:
+                    print(f"Failed to fetch file content for file_id: {file_id}")
+
+            except Exception as e:
+                print(f"Error processing file {file_id}: {e}")
+
+    if not temp_files:
+        raise HTTPException(status_code=400, detail="No valid files could be fetched")
+
+    # Call the process_upload function with the converted files
+    return await process_upload(files=temp_files, background_tasks=background_tasks)
+
+
+def make_calendar_events():
+    pass
+
+
+async def process_upload(
+    files: List[UploadFile],
+    background_tasks: BackgroundTasks = None,
+) -> dict:
+    if not files:
+        print("No valid files")
+        raise HTTPException(status_code=400, detail="No valid files provided")
+
+    # Filter out files that are not .txt, .docx, or .pdf
+    valid_files = [
         file
         for file in files
         if file.filename.endswith(".txt")
         or file.filename.endswith(".docx")
         or file.filename.endswith(".pdf")
+        or file.filename.endswith(".csv")
+        or file.filename.endswith(".pptx")
     ]
 
-    if not files:
+    if not valid_files:
         raise HTTPException(status_code=400, detail="No valid files uploaded")
 
     instance_name = str(uuid4())
 
     temp_files = []
-    for file in files:
-        file_content = file.file.read()
+    for file in valid_files:
+        file_content = await file.read()
         temp_file = io.BytesIO(file_content)
         temp_file.name = file.filename
         temp_files.append(temp_file)
 
+    # Create and configure the assistant
     assistant = client.beta.assistants.create(
         name=instance_name,
         instructions='You are an intelligent data parser designed to extract and organize schedule-related information from PDFs, Word documents, and text files. Your task is to analyze these files, identify key details such as course names, dates, times, and locations, and compile this data into a structured student schedule format that is easy to understand and use. Ensure accuracy in parsing and logical organization of the schedule information. Should there be no information to extract, return "[]" and nothing else along with it. Otherwise, return the schedule in json text format without the ```json * ```, without newlines and with no other text, [{Title: [Course Name], Date: [Date], Time: [Time], Location: [Location], Description: [Description], MiscInfo: [Misc. Info]}]. Should a field have no information to extract, return null in place. Title and Date are required fields. Time, Location, Description, and MiscInfo are optional fields.',
@@ -90,26 +188,19 @@ async def upload(
 
     vector_store = client.beta.vector_stores.create(name=instance_name)
 
-    # Use the upload and poll SDK helper to upload the files, add them to the vector store,
-    # and poll the status of the file batch for completion.
+    # Upload files and poll for completion
     file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
         vector_store_id=vector_store.id, files=temp_files
     )
 
-    # Check if the batch upload was successful
     if file_batch.status != "completed":
         raise HTTPException(status_code=500, detail="File batch upload failed.")
-
-    # You can print the status and the file counts of the batch to see the result of this operation.
-    print(file_batch.status)
-    print(file_batch.file_counts)
 
     assistant = client.beta.assistants.update(
         assistant_id=assistant.id,
         tool_resources={"file_search": {"vector_store_ids": [vector_store.id]}},
     )
 
-    # Create a thread and attach the file to the message
     thread = client.beta.threads.create(
         messages=[
             {
@@ -119,11 +210,6 @@ async def upload(
         ]
     )
 
-    # The thread now has a vector store with that file in its tool resources.
-    print(thread.tool_resources.file_search)
-
-    # Use the create and poll SDK helper to create a run and poll the status of
-    # the run until it's in a terminal state.
     run = client.beta.threads.runs.create_and_poll(
         thread_id=thread.id, assistant_id=assistant.id
     )
@@ -135,8 +221,6 @@ async def upload(
     except json.JSONDecodeError:
         response = message_content.value
 
-    print(response)
-
     annotations = message_content.annotations
     citations = []
     for index, annotation in enumerate(annotations):
@@ -145,19 +229,14 @@ async def upload(
             cited_file = client.files.retrieve(file_citation.file_id)
             citations.append(f"[{index}] {cited_file.filename}")
 
-    print(messages)
-    print("\n".join(citations))
-
-    # process with ai here
-    make_calendar_events()
-
+    # Schedule cleanup tasks
     background_tasks.add_task(
         cleanup_resources, vector_store.id, assistant.id, thread.id, file_batch.id
     )
 
     return {
         "ok": True,
-        "filenames": [file.filename for file in files],
+        "filenames": [file.filename for file in valid_files],
         "schedule_content": {
             "annotations": annotations,
             "value": message_content.value,
@@ -165,86 +244,3 @@ async def upload(
         "citations": citations,
         "response": response,
     }
-
-
-@app.post("/get_files")
-async def get_files(request: Request):
-    files = await request.json()
-
-    if not files or not isinstance(files, list):
-        raise HTTPException(status_code=400, detail="No file links provided")
-
-    authorization = request.headers.get("Authorization")
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Missing Authorization header")
-
-    # Prepare files for multipart response
-    multipart_data = []
-
-    async with AsyncClient() as client:
-        for file_id in files:
-            try:
-                metadata_response = await client.get(
-                    f"https://www.googleapis.com/drive/v3/files/{file_id}",
-                    headers={"Authorization": authorization},
-                    timeout=10.0,
-                )
-
-                if metadata_response.status_code != 200:
-                    continue  # Skip failed files
-
-                metadata = metadata_response.json()
-                mime_type = metadata.get("mimeType")
-                name = metadata.get("name", f"file_{uuid.uuid4()}")
-
-                if mime_type.startswith("application/vnd.google-apps."):
-                    # Export Google Docs Editors file
-                    export_format = (
-                        "application/pdf" if "document" in mime_type else "text/csv"
-                    )
-                    file_response = await client.get(
-                        f"https://www.googleapis.com/drive/v3/files/{file_id}/export?mimeType={export_format}",
-                        headers={"Authorization": authorization},
-                        timeout=10.0,
-                    )
-                else:
-                    # Fetch binary file
-                    file_response = await client.get(
-                        f"https://www.googleapis.com/drive/v3/files/{file_id}?alt=media",
-                        headers={"Authorization": authorization},
-                        timeout=10.0,
-                    )
-
-                if file_response.status_code == 200:
-                    multipart_data.append(
-                        {
-                            "filename": name,
-                            "content": file_response.content,
-                            "content_type": mime_type,
-                        }
-                    )
-
-            except Exception as e:
-                print(f"Error processing file {file_id}: {e}")
-                continue  # Skip failed files
-
-    # Create a generator for multipart response
-    # TODO: Get GPT to process files
-    async def file_stream():
-        boundary = f"boundary_{uuid.uuid4().hex}"
-        for file in multipart_data:
-            yield f"--{boundary}\r\n".encode()
-            yield f"Content-Disposition: form-data; name=\"files\"; filename=\"{file['filename']}\"\r\n".encode()
-            yield f"Content-Type: {file['content_type']}\r\n\r\n".encode()
-            yield file["content"]
-            yield b"\r\n"
-        yield f"--{boundary}--\r\n".encode()
-
-    return StreamingResponse(
-        file_stream(),
-        media_type="multipart/form-data",
-    )
-
-
-def make_calendar_events():
-    pass

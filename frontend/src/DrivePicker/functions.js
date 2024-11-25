@@ -8,7 +8,7 @@ export function handleSignOut(authToken, setAuthToken, setScreen) {
         if (window.google && window.google.accounts) {
             // eslint-disable-next-line no-undef
             google.accounts.oauth2.revoke(authToken, () => {
-                console.log("Access token revoked successfully");
+                console.warn("Access token revoked successfully");
                 setAuthToken(null);
                 setScreen("home");
             });

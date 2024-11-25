@@ -54,9 +54,8 @@ export default function ButtonGroup({
 			multiselect: true,
 			callbackFunction: (data) => {
 				if (data.action === "cancel") {
-					console.log("User clicked cancel/close button");
+					console.warn("User clicked cancel/close button");
 				}
-				console.log(data);
 				if (data.action === "picked") {
 					const document = data.docs[0];
 					const fileId = document.id;
