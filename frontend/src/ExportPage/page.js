@@ -1,26 +1,24 @@
+import { useState } from "react";
 import SelectableBoxRow from "../DrivePicker/BoxSelect";
-import { uploadFiles } from "./functions";
+import { handleExportClick } from "./functions";
 
 export default function ExportPage({ fileLinks, setFileLinks, localFiles, setLocalFiles, authToken, setResults, setScreen }) {
+    const [selectedBox, setSelectedBox] = useState(null);
+    const [error, setError] = useState(null);
+
     return (
         <>
-            <h1 style={{ textAlign: "center" }}>
+            <h1 className="text-center">
                 Select a platform to export to
             </h1>
-            <SelectableBoxRow />
+            <h2 className="text-center text-red-700">
+                {error}
+            </h2>
+            <SelectableBoxRow selectedBox={selectedBox} setSelectedBox={setSelectedBox} />
             <div className="cloud-button-container">
                 <button
                     className="upload-cloud-but flex items-center content-center"
-                    onClick={async () => {
-                        setScreen('processing');
-                        const res = await uploadFiles(fileLinks, localFiles, authToken, setFileLinks, setLocalFiles);
-                        if (res.ok) {
-                            setResults(res.data);
-                            setScreen('results');
-                        } else {
-                            setScreen('error');
-                        }
-                    }}>
+                    onClick={(e) => handleExportClick(e, selectedBox, setError, setScreen, fileLinks, localFiles, authToken, setFileLinks, setLocalFiles, setResults)}>
                     <img
                         alt="cloud"
                         className="padded-logo-cloud"

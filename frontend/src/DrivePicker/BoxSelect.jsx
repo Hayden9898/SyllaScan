@@ -1,10 +1,7 @@
 import "css/App.css";
 import "css/SelectableRow.css";
-import { useState } from "react";
 
-const SelectableBoxRow = () => {
-	const [selectedBox, setSelectedBox] = useState(null);
-
+const SelectableBoxRow = ({ selectedBox, setSelectedBox }) => {
 	const handleBoxClick = (info) => {
 		setSelectedBox(info.description);
 	};

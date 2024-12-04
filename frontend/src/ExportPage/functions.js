@@ -77,3 +77,18 @@ function handleFileDeleteAll(localFiles, fileLinks, setFileLinks, setLocalFiles)
     setFileLinks(new Set());
     setLocalFiles([]);
 }
+
+export async function handleExportClick(e, selectedBox, setError, setScreen, fileLinks, localFiles, authToken, setFileLinks, setLocalFiles, setResults) {
+    if (!selectedBox) {
+        setError("Please select an export method");
+        return;
+    }
+    setScreen('processing');
+    const res = await uploadFiles(fileLinks, localFiles, authToken, setFileLinks, setLocalFiles);
+    if (res.ok) {
+        setResults(res.data);
+        setScreen('results');
+    } else {
+        setScreen('error');
+    }
+}
