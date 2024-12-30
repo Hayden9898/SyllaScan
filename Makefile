@@ -19,7 +19,7 @@ prod-back:
 
 # Start the server with reload
 dev-back:
-	uvicorn $(MODULE) --host $(HOST) --port $(PORT) --reload
+	uvicorn $(MODULE) --host $(HOST) --port $(PORT) --reload --log-level debug
 
 # Start the frontend
 dev-front:

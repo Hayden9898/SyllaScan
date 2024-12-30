@@ -1,0 +1,75 @@
+{
+	"ok": true,
+	"filenames": ["Course Schedule - PD 20 Online - Fall 2024.pdf"],
+	"schedule_content": {
+		"annotations": [],
+		"value": "[{\"summary\": \"Assignment 1: Self-Assessment & Goal Setting\", \"dt_start\": \"2024-09-17 23:59:00\", \"dt_end\": \"2024-09-17 23:59:00\", \"location\": null, \"description\": null, \"misc_info\": \"15% of the course grade\"}, {\"summary\": \"Quiz 1: Modules 1, 2, 3, and 4\", \"dt_start\": \"2024-10-01 23:59:00\", \"dt_end\": \"2024-10-01 23:59:00\", \"location\": null, \"description\": null, \"misc_info\": \"15% of the course grade\"}, {\"summary\": \"Assignment 2: Midterm Check-in\", \"dt_start\": \"2024-10-22 23:59:00\", \"dt_end\": \"2024-10-22 23:59:00\", \"location\": null, \"description\": null, \"misc_info\": \"25% of the course grade\"}, {\"summary\": \"Quiz 2: Modules 5, 6, 7, 8, and 9\", \"dt_start\": \"2024-11-12 23:59:00\", \"dt_end\": \"2024-11-12 23:59:00\", \"location\": null, \"description\": null, \"misc_info\": \"15% of the course grade\"}, {\"summary\": \"Assignment 3: Major Reflective Report\", \"dt_start\": \"2024-11-19 23:59:00\", \"dt_end\": \"2024-11-19 23:59:00\", \"location\": null, \"description\": null, \"misc_info\": \"30% of the course grade, must pass\"}, {\"summary\": \"Optional Quiz\", \"dt_start\": \"2024-12-06 23:59:00\", \"dt_end\": \"2024-12-06 23:59:00\", \"location\": null, \"description\": null, \"misc_info\": \"Bonus 5%\"}, {\"summary\": \"Final Response\", \"dt_start\": \"2024-12-06 23:59:00\", \"dt_end\": \"2024-12-06 23:59:00\", \"location\": null, \"description\": null, \"misc_info\": \"Bonus 1%\"}, {\"summary\": \"End of Course Survey\", \"dt_start\": \"2024-12-06 23:59:00\", \"dt_end\": \"2024-12-06 23:59:00\", \"location\": null, \"description\": null, \"misc_info\": \"Bonus 1%\"}]"
+	},
+	"citations": [],
+	"response": [
+		{
+			"summary": "Assignment 1: Self-Assessment & Goal Setting",
+			"dt_start": "2024-09-17 23:59:00",
+			"dt_end": "2024-09-17 23:59:00",
+			"location": null,
+			"description": null,
+			"misc_info": "15% of the course grade"
+		},
+		{
+			"summary": "Quiz 1: Modules 1, 2, 3, and 4",
+			"dt_start": "2024-10-01 23:59:00",
+			"dt_end": "2024-10-01 23:59:00",
+			"location": null,
+			"description": null,
+			"misc_info": "15% of the course grade"
+		},
+		{
+			"summary": "Assignment 2: Midterm Check-in",
+			"dt_start": "2024-10-22 23:59:00",
+			"dt_end": "2024-10-22 23:59:00",
+			"location": null,
+			"description": null,
+			"misc_info": "25% of the course grade"
+		},
+		{
+			"summary": "Quiz 2: Modules 5, 6, 7, 8, and 9",
+			"dt_start": "2024-11-12 23:59:00",
+			"dt_end": "2024-11-12 23:59:00",
+			"location": null,
+			"description": null,
+			"misc_info": "15% of the course grade"
+		},
+		{
+			"summary": "Assignment 3: Major Reflective Report",
+			"dt_start": "2024-11-19 23:59:00",
+			"dt_end": "2024-11-19 23:59:00",
+			"location": null,
+			"description": null,
+			"misc_info": "30% of the course grade, must pass"
+		},
+		{
+			"summary": "Optional Quiz",
+			"dt_start": "2024-12-06 23:59:00",
+			"dt_end": "2024-12-06 23:59:00",
+			"location": null,
+			"description": null,
+			"misc_info": "Bonus 5%"
+		},
+		{
+			"summary": "Final Response",
+			"dt_start": "2024-12-06 23:59:00",
+			"dt_end": "2024-12-06 23:59:00",
+			"location": null,
+			"description": null,
+			"misc_info": "Bonus 1%"
+		},
+		{
+			"summary": "End of Course Survey",
+			"dt_start": "2024-12-06 23:59:00",
+			"dt_end": "2024-12-06 23:59:00",
+			"location": null,
+			"description": null,
+			"misc_info": "Bonus 1%"
+		}
+	]
+}
