@@ -52,21 +52,43 @@
 	padding: 1rem;
 	color: white;
 }
-.text-container {
-	background-color: rgba(151, 151, 151, 0.7);
-	border-radius: 10px;
-	padding: 10px;
-}
+
 
 .title {
-	font-size: x-large;
-	font-weight: 700;
-	text-shadow: 1.5px 1.5px 0 black, -1.5px 1.5px 0 black, 1.5px -1.5px 0 black,
-		-1.5px -1.5px 0 black;
+	font-size: 50px;
+	font-weight: 900;
+	color: white;
+	padding:50px;
+	padding-top: 200px;
 }
 .slogan-text {
-	font-size: large;
+	font-size: 20px;
 	font-weight: 600;
 }
-.about-text {
+
+.header-columns{
+	display: flex;
+	background-image: url('https://preview.redd.it/3tgcrfk5o5t11.png?width=1920&format=png&auto=webp&s=a46b80d727f91d126ef03c80565045f73eb72b7c');
+	background-size: cover;
+	height: auto;
+	width: 100%;
+	position:relative;
+	padding-bottom: 0;
 }
+
+.title-col{
+	display:flex;
+	flex: 1;
+	flex-direction: column;
+	padding: 40px;
+	align-items: center;
+	text-align: center;
+	justify-content: center ;
+	z-index: 1;
+}
+.wave {
+	width: 100%;
+	height: auto;
+	display: block; 
+  }
+
