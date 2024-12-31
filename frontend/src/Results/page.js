@@ -6,12 +6,13 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 
 import "css/Calendar.css"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 
 export default function Results({ results, setScreen }) {
+    const [calendarEvents, setCalendarEvents] = useState([]);
     useEffect(() => {
-        convertToCalendar(results);
+        convertToCalendar(results, setCalendarEvents);
     }, [results]);
 
     return (
@@ -25,7 +26,7 @@ export default function Results({ results, setScreen }) {
                         center: "title",
                         right: "dayGridMonth,timeGridWeek,timeGridDay"
                     }}
-                    events={results}
+                    events={calendarEvents}
                     eventClick={(info) => {
                         alert(`Event: ${info.event.title}\n${info.event.extendedProps.description}`);
                         // TODO: Make this into a modal popup

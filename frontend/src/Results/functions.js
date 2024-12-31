@@ -27,20 +27,22 @@ export const downloadCalendar = async (results) => {
     }
 };
 
-export const convertToCalendar = (results) => {
-    results.forEach(element => {
-        element.title = element["summary"];
-        element.date = element["dt_start"].split(" ")[0];
+export const convertToCalendar = (results, setCalendarEvents) => {
+    setCalendarEvents(results.map((result) => {
         let description = "";
-        if (element["description"]) {
-            description += element["description"];
+        if (result["description"]) {
+            description += result["description"];
         }
-        if (element["location"]) {
-            description += "\n" + element["location"];
+        if (result["location"]) {
+            description += "\n" + result["location"];
         }
-        if (element["misc_info"]) {
-            description += "\n" + element["misc_info"];
+        if (result["misc_info"]) {
+            description += "\n" + result["misc_info"];
         }
-        element.description = description;
-    });
+        return {
+            title: result["summary"],
+            date: result["dt_start"].split(" ")[0],
+            description: description
+        };
+    }));
 }
