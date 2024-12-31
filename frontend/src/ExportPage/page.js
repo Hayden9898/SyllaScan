@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SelectableBoxRow from "../DrivePicker/BoxSelect";
+import SelectableBoxRow from "./BoxSelect";
 import { handleExportClick } from "./functions";
 
 export default function ExportPage({ fileLinks, setFileLinks, localFiles, setLocalFiles, authToken, setResults, setScreen }) {
