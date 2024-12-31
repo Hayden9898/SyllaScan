@@ -1,0 +1,19 @@
+/* Example Google Calendar-inspired styles */
+.fc {
+    font-family: 'Roboto', sans-serif;
+}
+
+.fc .fc-toolbar {
+    background-color: #4285f4;
+    color: white;
+}
+
+.fc .fc-event {
+    background-color: #34a853;
+    border-color: #34a853;
+    color: white;
+}
+
+.fc .fc-daygrid-day {
+    border: 1px solid #ddd;
+}

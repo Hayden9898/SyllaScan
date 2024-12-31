@@ -1,45 +1,38 @@
-import { useEffect } from "react"
+import Button from "components/Button";
+import { convertToCalendar, downloadCalendar } from "./functions";
+
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+
+import "css/Calendar.css"
+import { useEffect } from "react";
+
 
 export default function Results({ results, setScreen }) {
     useEffect(() => {
-        const downloadCalendar = async () => {
-            try {
-                const response = await fetch("http://localhost:8000/download_calendar", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(results), // Assuming 'results' is your JSON payload
-                });
-
-                if (response.ok) {
-                    const blob = await response.blob();
-                    console.log(blob)
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = "calendar.ics";
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(url);
-                } else {
-                    console.error("Failed to fetch results");
-                }
-            } catch (error) {
-                console.error("Error fetching calendar:", error);
-            }
-        };
-
-        downloadCalendar();
-    }, []);
+        convertToCalendar(results);
+    }, [results]);
 
     return (
-        <div>
-            <h1>Results</h1>
-            <div id="results">
-                {JSON.stringify(results, null, 2)}
+        <div className="flex flex-col items-center">
+            <div id="results" className="w-[70%] mt-4">
+                <FullCalendar
+                    plugins={[dayGridPlugin, timeGridPlugin]}
+                    initialView="dayGridMonth"
+                    headerToolbar={{
+                        left: "prev,next today",
+                        center: "title",
+                        right: "dayGridMonth,timeGridWeek,timeGridDay"
+                    }}
+                    events={results}
+                    eventClick={(info) => {
+                        alert(`Event: ${info.event.title}\n${info.event.extendedProps.description}`);
+                        // TODO: Make this into a modal popup
+                    }}
+                />
             </div>
+            <Button onClick={() => downloadCalendar(results)}>Download Calendar</Button>
         </div>
     )
 }
