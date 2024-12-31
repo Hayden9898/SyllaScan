@@ -41,7 +41,7 @@ export const convertToCalendar = (results, setCalendarEvents) => {
         }
         return {
             title: result["summary"],
-            date: result["dt_start"].split(" ")[0],
+            date: result["dt_start"],
             description: description
         };
     }));
