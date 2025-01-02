@@ -1,4 +1,6 @@
 import Button from 'components/Button'
+import Slideshow from './slideshow'
+
 
 export default function Home({ setScreen }) {
     return (
@@ -9,8 +11,7 @@ export default function Home({ setScreen }) {
                             <i><div className="slogan-text">"Conquering Procrastination, one deadline at a time."</div></i>
                         </div>
                     </div>
-                <div className='title-col'>
-                    
+                <div className='title-col'>        
                 </div>
             </div>
             <svg className='wave' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
@@ -30,6 +31,24 @@ export default function Home({ setScreen }) {
                     </path>
                 </svg>
             {/*implement about us*/}
+            <div className='about-section'>
+                <div className='aboutUs-background'>
+                    <div className='one-column'>
+                        <div className='intro-title'>
+                            <p>What we do</p>
+                            <div className='intro-subtitle'>
+                                <p>Boost Productivity</p>
+                            </div>
+                            <div className='sub-paragraph'>
+                                <p>Simple to use, powerful in action. Utilize AI to remind you of upcoming classes, assignmnets, quizes, and tests.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className='slideshow'>
+                    <Slideshow/> 
+                    </div>
+            </div>
             <div className='wrapper-container'>
                 <div className='mx-auto justify-self-center'>
                     <Button onClick={() => { setScreen('drive') }}>

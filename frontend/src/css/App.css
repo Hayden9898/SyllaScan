@@ -92,3 +92,39 @@
 	display: block; 
   }
 
+.aboutUs-background{
+	display: flex;
+	width: 100%;
+	height: auto;
+	justify-content: left;
+	align-items: center;
+  }
+.one-column{
+	flex: 0.5;
+}
+
+.two-column{
+	flex: 1;
+}
+.intro-title{
+	align-items: left;
+	padding: 20px;
+	padding-left: 150px;
+	padding-bottom: 40px;
+	color: rgb(1, 1, 101);
+	font-weight: 700;
+	font-size: 20px;
+  }
+.intro-title .intro-subtitle{
+	padding-top: 20px;
+	font-size: 30px;
+}
+
+.intro-title .sub-paragraph{
+}
+.about-section{
+	flex-direction: column;
+	display:flex;
+	background: linear-gradient(to bottom, white, rgb(204, 159, 247));
+}
+
