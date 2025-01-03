@@ -125,6 +125,6 @@
 .about-section{
 	flex-direction: column;
 	display:flex;
-	background: linear-gradient(to bottom, white, rgb(204, 159, 247));
+	background: linear-gradient(to bottom, white, rgb(225, 194, 255));
 }
 
