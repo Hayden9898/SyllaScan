@@ -1,8 +1,9 @@
-from typing import List
-from uuid import uuid4
 import io
 import json
 import os
+from typing import List
+from uuid import uuid4
+
 from fastapi import BackgroundTasks, HTTPException, UploadFile
 from openai import OpenAI
 

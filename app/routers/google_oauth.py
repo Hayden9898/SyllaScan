@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Response, Request, HTTPException
+import os
+import secrets
+
+import requests
+from fastapi import APIRouter, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
 from google_auth_oauthlib.flow import Flow
-import requests
-import secrets
-import os
-
 
 # OAuth configuration
 oauth_conf = {
