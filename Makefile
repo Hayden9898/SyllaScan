@@ -6,8 +6,8 @@ HOST = 0.0.0.0
 PORT = 8000
 
 setup:
-	pip install -r requirements.txt
-	cd frontend && npm install
+	cd app && pip install -r requirements.txt
+	cd ../frontend && npm install
 
 # Start the server
 prod-front:
@@ -15,11 +15,11 @@ prod-front:
 
 # Run the server
 prod-back:
-	uvicorn $(MODULE) --host $(HOST) --port $(PORT)
+	cd app && uvicorn $(MODULE) --host $(HOST) --port $(PORT)
 
 # Start the server with reload
 dev-back:
-	uvicorn $(MODULE) --host $(HOST) --port $(PORT) --reload --log-level debug
+	cd app && uvicorn $(MODULE) --host $(HOST) --port $(PORT) --reload --log-level debug
 
 # Start the frontend
 dev-front:

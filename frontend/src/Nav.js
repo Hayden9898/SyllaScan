@@ -1,8 +1,23 @@
 import { FaLinkedin, FaGithub } from 'react-icons/fa';
 import Button from 'components/Button';
-import { handleSignOut } from 'DrivePicker/functions';
+import { handleSignOut, checkLoginStatus } from 'Login/functions';
+import { useEffect, useState } from 'react';
 
-export default function Nav({ authToken, setAuthToken, setScreen }) {
+export default function Nav() {
+    const [loggedIn, setLoggedIn] = useState(false);
+    useEffect(() => {
+        const fetchLoginStatus = async () => {
+            try {
+                const loggedIn = await checkLoginStatus();
+                setLoggedIn(loggedIn.authenticated);
+                console.log("User is logged in:", loggedIn);
+            } catch (error) {
+                console.error("Failed to check login status:", error);
+            }
+        };
+
+        fetchLoginStatus();
+    }, []);
     return (
         <nav className="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
             <div className="container-fluid">
@@ -49,8 +64,8 @@ export default function Nav({ authToken, setAuthToken, setScreen }) {
                         <button className="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
                     </form>
                 </div>
-                {authToken &&
-                    <Button className="shadow-none" onClick={() => handleSignOut(authToken, setAuthToken, setScreen)}>Signout</Button>
+                {loggedIn &&
+                    <Button className="shadow-none" onClick={() => handleSignOut(()=>{})}>Signout</Button>
                 }
             </div>
         </nav>
