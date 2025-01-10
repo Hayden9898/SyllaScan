@@ -1,11 +1,11 @@
 from typing import List
-from helpers.openai import process_upload
+
+import helpers.calendar as calendar
 from dotenv import load_dotenv
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-
-from routers import google_oauth, google
-import helpers.calendar as calendar
+from helpers.openai import process_upload
+from routers import google, google_oauth
 
 load_dotenv()
 
