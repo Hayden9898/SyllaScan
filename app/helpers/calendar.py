@@ -1,10 +1,12 @@
-import icalendar
 import datetime
 import json
 import os
 import tempfile
-from fastapi.responses import FileResponse
+
+import icalendar
 from fastapi import BackgroundTasks
+from fastapi.responses import FileResponse
+
 
 def create_calendar(events_json: json) -> FileResponse:
     cal = icalendar.Calendar()
