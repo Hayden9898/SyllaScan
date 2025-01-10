@@ -1,23 +1,16 @@
-import React, { useEffect } from "react";
+import React from "react";
 import useDrivePicker from "react-google-drive-picker";
 
-import Button from "components/Button";
 import Label from "components/Label";
+import GoogleLogin from "Login/Google";
 
 export default function ButtonGroup({
 	setLocalFiles,
-	authToken,
 	setFileLinks,
 	fileLinks,
-	setAuthToken,
 	className,
 }) {
-	const [openPicker, authRes] = useDrivePicker();
-	useEffect(() => {
-		if (authRes) {
-			setAuthToken(authRes.access_token);
-		}
-	}, [authRes, setAuthToken]);
+	const [openPicker] = useDrivePicker();
 
 	function handleFileUpload(event) {
 		const fileInput = event.target;
@@ -46,7 +39,7 @@ export default function ButtonGroup({
 		openPicker({
 			clientId: process.env.REACT_APP_CLIENT_ID,
 			developerKey: process.env.REACT_APP_API_KEY,
-			token: authToken,
+			// token: authToken,
 			viewId: "DOCS",
 			showUploadView: true,
 			showUploadFolders: true,
@@ -91,20 +84,10 @@ export default function ButtonGroup({
 				/>
 			</div>
 
-			<div>
-				<div className="upload-but">
-					<Button
-						className="btn btn-info bg-white text-black gap-1 items-center flex flex-nowrap"
-						onClick={handleOpenPicker}
-					>
-						<img
-							className="padded-logo"
-							src="https://imgs.search.brave.com/oMwyxbNaJljh7kuYGRIsUmuNijirC2PBKnkVDDxGMPA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9rc3Rh/dGljLmdvb2dsZXVz/ZXJjb250ZW50LmNv/bS9maWxlcy9kNTdi/MjQxMDZjMzRjN2U1/MGVmM2Q5ODQyM2I5/NGRkYWYzNWFkMmRh/NzNhOWI5ZDRkMTJm/NTJkYmI5ZGQ0YzA4/YzI5NTdmNjI1NWFi/ODY5MGQ1ZWYwYjMy/Y2ZmODI4N2UwOTU3/N2QwNWU0NzlkMjYz/ZTg3MjE2MGM0Yzll/ODM2Mw"
-							alt="google drive"
-						/>
-						Upload from Google Drive
-					</Button>
-				</div>
+			<div className="upload-but">
+				<GoogleLogin
+					callback={handleOpenPicker}
+				/>
 			</div>
 		</div>
 	);

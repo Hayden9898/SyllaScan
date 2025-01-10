@@ -10,8 +10,6 @@ export default function DrivePicker({
 	setFileLinks,
 	localFiles,
 	setLocalFiles,
-	authToken,
-	setAuthToken,
 	setScreen,
 }) {
 	useEffect(() => {
@@ -33,10 +31,8 @@ export default function DrivePicker({
 				/>
 				<ButtonGroup
 					setLocalFiles={setLocalFiles}
-					authToken={authToken}
 					setFileLinks={setFileLinks}
 					fileLinks={fileLinks}
-					setAuthToken={setAuthToken}
 					className={"absolute top-[75%]"}
 				/>
 			</div>
