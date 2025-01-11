@@ -2,17 +2,13 @@ import io
 import uuid
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Request, UploadFile
-from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
+from helpers.google_credentials import GoogleOAuth
+from helpers.openai import process_upload
 from httpx import AsyncClient
 
 router = APIRouter()
-
-SCOPES = [
-    "https://www.googleapis.com/auth/calendar",
-    "https://www.googleapis.com/auth/drive.readonly",
-    "https://www.googleapis.com/auth/drive.file",
-]
+oauth = GoogleOAuth()
 
 
 @router.post("/get_files")
@@ -22,7 +18,7 @@ async def get_files(request: Request, background_tasks: BackgroundTasks):
     if not files or not isinstance(files, list):
         raise HTTPException(status_code=400, detail="No file links provided")
 
-    token = request.cookies.get("access_token")
+    bearer = f"Bearer {request.cookies.get('access_token')}"
 
     temp_files = []
 
@@ -32,7 +28,7 @@ async def get_files(request: Request, background_tasks: BackgroundTasks):
                 # Fetch metadata
                 metadata_response = await client.get(
                     f"https://www.googleapis.com/drive/v3/files/{file_id}",
-                    headers={"Authorization": token},
+                    headers={"Authorization": bearer},
                     timeout=10.0,
                 )
 
@@ -60,7 +56,7 @@ async def get_files(request: Request, background_tasks: BackgroundTasks):
                     if export_format:
                         file_response = await client.get(
                             f"https://www.googleapis.com/drive/v3/files/{file_id}/export?mimeType={export_format}",
-                            headers={"Authorization": token},
+                            headers={"Authorization": bearer},
                             timeout=10.0,
                         )
                     else:
@@ -72,7 +68,7 @@ async def get_files(request: Request, background_tasks: BackgroundTasks):
                     # Fetch binary file
                     file_response = await client.get(
                         f"https://www.googleapis.com/drive/v3/files/{file_id}?alt=media",
-                        headers={"Authorization": token},
+                        headers={"Authorization": bearer},
                         timeout=10.0,
                     )
 
@@ -102,7 +98,7 @@ async def export_to_gcal(request: Request):
     token = request.cookies.get("access_token")
 
     # Use the token to create credentials
-    credentials = Credentials(token, scopes=SCOPES)
+    credentials = oauth.get_credentials(request)
 
     # Build the Google Calendar API client
     service = build("calendar", "v3", credentials=credentials)

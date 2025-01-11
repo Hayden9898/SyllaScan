@@ -9,7 +9,6 @@ from routers import google, google_oauth
 
 load_dotenv()
 
-
 app = FastAPI()
 app.include_router(google_oauth.router, prefix="/oauth/google", tags=["oauth/google"])
 app.include_router(google.router, prefix="/google", tags=["google"])

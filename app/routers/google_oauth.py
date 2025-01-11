@@ -1,29 +1,14 @@
 import os
 import secrets
+from urllib.parse import urlencode
 
 import requests
 from fastapi import APIRouter, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
-from google_auth_oauthlib.flow import Flow
-
-# OAuth configuration
-oauth_conf = {
-    "client_id": os.getenv("CLIENT_ID"),
-    "client_secret": os.getenv("CLIENT_SECRET"),
-    "redirect_uri": "http://localhost:8000/oauth/callback",
-    "scopes": [
-        "https://www.googleapis.com/auth/calendar",
-        "https://www.googleapis.com/auth/drive.readonly",
-        "https://www.googleapis.com/auth/drive.file",
-    ],
-}
-CLIENT_ID = oauth_conf["client_id"]
-CLIENT_SECRET = oauth_conf["client_secret"]
-SCOPES = oauth_conf["scopes"]
-TOKEN_URI = "https://oauth2.googleapis.com/token"
-AUTH_URI = "https://accounts.google.com/o/oauth2/auth"
+from helpers.google_credentials import GoogleOAuth
 
 router = APIRouter()
+oauth = GoogleOAuth()
 
 
 @router.get("/")
@@ -32,50 +17,47 @@ def google_oauth(response: Response):
     state = secrets.token_urlsafe(16)
 
     # Store the state in an HTTP-only cookie
-    response.set_cookie(key="oauth_state", value=state, httponly=True, secure=True)
+    response.set_cookie(
+        key="oauth_state",
+        value=state,
+        httponly=True,
+        secure=True,
+        max_age=300,  # 5 minutes
+    )
 
     # Construct the authorization URL
-    auth_url = (
-        f"{AUTH_URI}?client_id={CLIENT_ID}"
-        f"&redirect_uri=http://localhost:8000/oauth/google/callback"
-        f"&response_type=code&scope={' '.join(SCOPES)}"
-        f"&state={state}&access_type=offline"
-    )
+    auth_url = oauth.auth_url + "&state=" + state
+
     return RedirectResponse(auth_url)
 
 
 @router.get("/callback")
-def google_callback(request: Request, state: str, code: str):
-    # Exchange the authorization code for tokens
-    token_request_data = {
-        "code": code,
-        "client_id": CLIENT_ID,
-        "client_secret": CLIENT_SECRET,
-        "redirect_uri": "http://localhost:8000/oauth/google/callback",
-        "grant_type": "authorization_code",
-        "scope": " ".join(SCOPES),
-    }
-    try:
-        response = requests.post(TOKEN_URI, data=token_request_data, timeout=10)
-        response.raise_for_status()
-        token_response = response.json()
-    except Exception as e:
+def google_callback(request: Request, state: str):
+    token_response = oauth.retrieve_token(request, grant_type="authorization_code")
+
+    # Validate token response
+    access_token = token_response.get("access_token")
+    refresh_token = token_response.get("refresh_token")
+    if not access_token or not refresh_token:
         raise HTTPException(
-            status_code=500, detail=f"Token exchange failed: {str(e)}"
-        ) from None
+            status_code=500, detail="Token response missing required fields"
+        )
 
-    response = RedirectResponse(url="http://localhost:3000", status_code=303)
+    # Create a response to redirect the user
+    redirect_url = "http://localhost:3000"
+    response = RedirectResponse(url=redirect_url, status_code=303)
 
+    # Securely store tokens in cookies
     response.set_cookie(
         key="access_token",
-        value=token_response.get("access_token"),
+        value=access_token,
         httponly=True,
         secure=True,
         samesite="None",
     )
     response.set_cookie(
         key="refresh_token",
-        value=token_response.get("refresh_token"),
+        value=refresh_token,
         httponly=True,
         secure=True,
         samesite="None",
@@ -87,28 +69,14 @@ def google_callback(request: Request, state: str, code: str):
 @router.get("/check_scopes")
 def check_scopes(request: Request):
     """
-    Returns the Google OAuth scopes dynamically by initializing the flow.
+    Checks if the access token has the required Google OAuth scopes.
     """
     try:
-        # Initialize the OAuth flow with environment variables
-        flow = Flow.from_client_config(
-            {
-                "web": {
-                    "client_id": CLIENT_ID,
-                    "client_secret": CLIENT_SECRET,
-                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                    "token_uri": "https://oauth2.googleapis.com/token",
-                }
-            },
-            scopes=[],  # Initialize with an empty list to check later
-        )
+        credentials = oauth.get_credentials(request)
 
-        # Retrieve the default scopes from the flow (if any)
-        scopes = flow.client_config.get("scopes", [])
+        token_scopes = set(credentials.scopes or [])
+        missing_scopes = set(oauth.scopes) - token_scopes
 
-        # Check if the required scopes are present in the default scopes
-        missing_scopes = set(SCOPES) - set(scopes)
-        print(missing_scopes, request.cookies.get("access_token"))
         if missing_scopes:
             return {"error": f"Missing required scopes: {missing_scopes}"}
         return {"has_scopes": True}
@@ -121,25 +89,7 @@ def refresh_token(request: Request):
     """
     Refreshes the Google OAuth token using the refresh token.
     """
-    refresh_token = request.cookies.get("refresh_token")
-    if not refresh_token:
-        raise HTTPException(status_code=401, detail="Missing refresh token")
-
-    token_request_data = {
-        "client_id": CLIENT_ID,
-        "client_secret": CLIENT_SECRET,
-        "refresh_token": refresh_token,
-        "grant_type": "refresh_token",
-    }
-
-    try:
-        response = requests.post(TOKEN_URI, data=token_request_data, timeout=10)
-        response.raise_for_status()
-        token_response = response.json()
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Token refresh failed: {str(e)}"
-        ) from None
+    token_response = oauth.retrieve_token(request, grant_type="refresh_token")
 
     response = RedirectResponse(url="http://localhost:3000", status_code=303)
     response.set_cookie(
@@ -187,3 +137,40 @@ def revoke_token(request: Request):
 def check_auth(request: Request):
     auth_token = request.cookies.get("access_token")
     return {"authenticated": auth_token}
+
+
+@router.get("/get_token")
+def get_access_token(request: Request) -> dict:
+    """
+    Validates the Referer header and returns the access token if valid.
+
+    Args:
+        request (Request): The FastAPI request object.
+        allowed_origin (str): The allowed origin (e.g., "http://localhost:3000").
+
+    Returns:
+        str: The valid access token.
+
+    Raises:
+        HTTPException: If the Referer is invalid, token is missing, or token is invalid.
+    """
+    # Validate the Referer header
+    referer = request.headers.get("referer")
+    if not referer or not referer.startswith("http://localhost:3000"):
+        raise HTTPException(status_code=403, detail="Invalid Referer")
+
+    # Retrieve tokens from cookies
+    access_token = request.cookies.get("access_token")
+    refresh_token = request.cookies.get("refresh_token")
+
+    if not access_token and not refresh_token:
+        raise HTTPException(
+            status_code=401, detail="Missing access token and refresh token"
+        )
+
+    credentials = oauth.get_credentials(request)
+    return {
+        "access_token": access_token,
+        "expired": credentials.expired,
+        "ok": True
+    }
