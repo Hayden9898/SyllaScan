@@ -8,6 +8,9 @@ nav ul {
     color: #fff;
     padding: 0.5rem;
     position: relative;
+    font-size: larger;
+    font-weight: 400;
+    font-family: "Nunito Sans", sans-serif;
 }
 
 .link::before {

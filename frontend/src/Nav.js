@@ -101,7 +101,7 @@ export default function Nav() {
                     duration: 0.2,
                 }}
                 className={cn(
-                    `z-[10] fixed text-center justify-center flex flex-col md:grid grid-cols-3 items-center w-full md:h-[5em] px-8 md:py-3 bg-black md:text-sm text-2xl transition-all duration-300 ease-in-out ${open ? "h-full" : mobile && "h-[13%] items-start"
+                    `z-[10] fixed text-center justify-center flex flex-col md:grid grid-cols-3 items-center w-full md:h-[5em] px-8 md:py-3 bg-transparent md:text-sm text-2xl transition-all duration-300 ease-in-out ${open ? "h-full" : mobile && "h-[13%] items-start"
                     }`
                 )}
             >
@@ -132,7 +132,7 @@ export default function Nav() {
                     <>
                         <Link
                             href="/"
-                            className="name justify-self-start invisible md:visible"
+                            className="name justify-self-start md:visible text-white text-xl font-bold"
                         >
                             SyllaScan
                         </Link>
@@ -156,7 +156,7 @@ export default function Nav() {
                         </ul>
                         <ul
                             className={cn(
-                                "nav-links flex md:flex-row flex-col items-center md:justify-self-end md:space-x-4 pt-4 md:pt-0",
+                                "nav-links flex md:flex-row flex-col items-center md:justify-self-end md:space-x-4 md:pt-0",
                                 { show: isMounted }
                             )}
                         >
