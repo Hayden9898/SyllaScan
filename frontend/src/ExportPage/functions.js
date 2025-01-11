@@ -1,4 +1,4 @@
-import { handleSignOut } from 'Login/functions';
+import { checkScopes } from 'Login/functions';
 
 export async function uploadFiles(fileLinks, localFiles, setFileLinks, setLocalFiles) {
     const formData = new FormData();
@@ -87,29 +87,18 @@ export async function handleExportClick(e, selectedBox, setError, setScreen, fil
     }
 
     if (selectedBox === "Google Calendar") {
-        const res = await fetch("http://localhost:8000/oauth/google/check_scopes", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            }
-        });
+        const hasAccess = await checkScopes();
 
-        if (!res.ok) {
-            throw new Error("Failed to check Google scopes");
-        }
-
-        const hasAccess = await res.json();
-        if (!hasAccess.has_scopes) {
-            handleSignOut(() => { });
+        if (!hasAccess) {
             setLoginType("google");
             return { ok: false, reason: "calendar" };
         }
 
-        const res2 = await uploadFiles(fileLinks, localFiles, setFileLinks, setLocalFiles);
-        if (res2.ok) {
-            setResults(res2.data);
+        const fileData = await uploadFiles(fileLinks, localFiles, setFileLinks, setLocalFiles);
+        if (fileData.ok) {
+            setResults(fileData.data);
         } else {
-            setError(`Failed to upload files ${res2}`)
+            setError(`Failed to upload files ${fileData}`)
             setScreen("error");
         }
 
@@ -118,7 +107,7 @@ export async function handleExportClick(e, selectedBox, setError, setScreen, fil
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(res.data),
+            body: JSON.stringify(fileData.data),
         });
 
         console.log(cal_res)

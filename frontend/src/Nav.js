@@ -10,7 +10,6 @@ export default function Nav() {
             try {
                 const loggedIn = await checkLoginStatus();
                 setLoggedIn(loggedIn.authenticated);
-                console.log("User is logged in:", loggedIn);
             } catch (error) {
                 console.error("Failed to check login status:", error);
             }
