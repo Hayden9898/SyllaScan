@@ -14,7 +14,7 @@ export default function DrivePicker({
 }) {
 	useEffect(() => {
 		return () => {
-			localFiles.forEach(({ file, previewUrl }, index) => {
+			localFiles.forEach(({ previewUrl }) => {
 				URL.revokeObjectURL(previewUrl);
 			});
 		};

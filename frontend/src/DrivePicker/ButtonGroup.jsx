@@ -103,6 +103,7 @@ export default function ButtonGroup({
 					accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/docx, .docx, .xlsx, .xls, .pdf, .doc, .txt, .rtf, .xml"
 					type="file"
 					id="file-upload"
+					multiple
 					style={{ display: "none" }}
 					onChange={handleFileUpload}
 				/>
