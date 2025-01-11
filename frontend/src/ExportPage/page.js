@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import SelectableBoxRow from "./BoxSelect";
 import { handleExportClick } from "./functions";
-import GoogleLogin from 'Login/Google';
 import { useNavigate } from "react-router-dom";
 
 
@@ -22,9 +21,12 @@ export default function ExportPage({ fileLinks, setFileLinks, localFiles, setLoc
             <h1 className="text-center">
                 Select a platform to export to
             </h1>
-            <h2 className="text-center text-red-700">
-                {error}
-            </h2>
+            {
+                error &&
+                <h2 className="text-center text-red-700">
+                    {error}
+                </h2>
+            }
             <SelectableBoxRow selectedBox={selectedBox} setSelectedBox={setSelectedBox} />
             <div className="cloud-button-container">
                 <button

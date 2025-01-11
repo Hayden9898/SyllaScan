@@ -1,36 +1,75 @@
+import json
 import secrets
+from urllib.parse import quote, unquote
 
+import jwt
 import requests
-from fastapi import APIRouter, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
 from helpers.google_credentials import GoogleOAuth
 
 router = APIRouter()
 oauth = GoogleOAuth()
 
+ALLOWED_REDIRECTS = ["/", "/upload", "/export"]
+SECRET_KEY = secrets.token_urlsafe(32)
+
+
+def preprocess_redirect_to(redirect_to: str = "/") -> str:
+    redirect_to = unquote(redirect_to)
+    if not redirect_to or redirect_to not in ALLOWED_REDIRECTS:
+        print("Invalid redirect URL")
+        redirect_to = "/"
+    return redirect_to
+
+
+def validate_state(request: Request, state: str) -> dict:
+    try:
+        return jwt.decode(state, SECRET_KEY, algorithms=["HS256"])
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=400, detail="Invalid state parameter")
+
 
 @router.get("/")
-def google_oauth(response: Response):
-    # Generate a unique state value
-    state = secrets.token_urlsafe(16)
+def google_oauth(
+    request: Request,
+    response: Response,
+    redirect_to: str = Depends(preprocess_redirect_to),
+):
+    state = jwt.encode(
+        {
+            "redirect_to": quote(redirect_to),
+            "nonce": secrets.token_urlsafe(16),
+        },
+        SECRET_KEY,
+        algorithm="HS256",
+    )
 
-    # Store the state in an HTTP-only cookie
     response.set_cookie(
         key="oauth_state",
         value=state,
         httponly=True,
         secure=True,
-        max_age=300,  # 5 minutes
+        max_age=300,
     )
 
     # Construct the authorization URL
-    auth_url = oauth.auth_url + "&state=" + state
+    auth_url = f"{oauth.auth_url}&redirect_to={redirect_to}&state={state}"
 
     return RedirectResponse(auth_url)
 
 
 @router.get("/callback")
-def google_callback(request: Request, state: str):
+def google_callback(request: Request, state: str = Depends(validate_state)):
+    try:
+        nonce = state.get("nonce")
+        if not nonce:
+            raise HTTPException(status_code=400, detail="Invalid state")
+        redirect_to = preprocess_redirect_to(state.get("redirect_to", "/"))
+    except Exception as e:
+        print(f"Error decoding state: {e}")
+        redirect_to = "/"
+
     token_response = oauth.retrieve_token(request, grant_type="authorization_code")
 
     # Validate token response
@@ -42,7 +81,7 @@ def google_callback(request: Request, state: str):
         )
 
     # Create a response to redirect the user
-    redirect_url = "http://localhost:3000"
+    redirect_url = f"http://localhost:3000{redirect_to}"
     response = RedirectResponse(url=redirect_url, status_code=303)
 
     # Securely store tokens in cookies
@@ -171,8 +210,4 @@ def get_access_token(request: Request) -> dict:
         )
 
     credentials = oauth.get_credentials(request)
-    return {
-        "access_token": access_token,
-        "expired": credentials.expired,
-        "ok": True
-    }
+    return {"access_token": access_token, "expired": credentials.expired, "ok": True}

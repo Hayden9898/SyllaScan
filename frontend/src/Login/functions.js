@@ -1,7 +1,8 @@
-export async function login() {
+export async function login(redirect) {
     const hasAccess = await checkScopes();
     if (!hasAccess) {
-        window.location.href = "http://localhost:8000/oauth/google";
+        const redirect_uri = redirect ? `?redirect_to=${encodeURIComponent(redirect)}` : "";
+        window.location.href = `http://localhost:8000/oauth/google${redirect_uri}`;
     }
     return hasAccess;
 }

@@ -1,13 +1,13 @@
 import Button from "components/Button";
 import { login } from "./functions";
 
-export default function GoogleLogin({ callback }) {
+export default function GoogleLogin({ callback, redirect }) {
 	return (
 		<Button
 			className="btn btn-info bg-white text-black gap-1 items-center flex flex-nowrap"
 			onClick={async () => {
-				const res = await login();
-				if (res) {
+				const res = await login(redirect);
+				if (res && callback) {
 					callback();
 				}
 			}}

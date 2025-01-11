@@ -111,6 +111,7 @@ export default function ButtonGroup({
 
 			<div className="upload-but">
 				<GoogleLogin
+					redirect={"/upload"}
 					callback={handleOpenPicker}
 				/>
 			</div>

@@ -11,3 +11,4 @@ google-auth-oauthlib
 icalendar
 starlette>=0.40.0
 itsdangerous
+PyJWT
