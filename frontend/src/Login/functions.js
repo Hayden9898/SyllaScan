@@ -22,9 +22,8 @@ export async function checkScopes() {
     return hasAccess.has_scopes;
 }
 
-export async function handleSignOut(callback) {
+export async function handleSignOut() {
     window.location.href = "http://localhost:8000/oauth/google/revoke";
-    callback();
 }
 
 export async function checkLoginStatus() {

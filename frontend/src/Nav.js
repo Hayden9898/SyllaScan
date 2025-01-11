@@ -174,7 +174,7 @@ export default function Nav() {
                             ))}
                             {loggedIn &&
                                 <li>
-                                    <Button className="shadow-none" onClick={() => handleSignOut(() => { })}>Signout</Button>
+                                    <Button className="shadow-none" onClick={handleSignOut}>Signout</Button>
                                 </li>
                             }
                         </ul>
