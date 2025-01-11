@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import useDrivePicker from "react-google-drive-picker";
 
 import Label from "components/Label";
@@ -11,6 +11,30 @@ export default function ButtonGroup({
 	className,
 }) {
 	const [openPicker] = useDrivePicker();
+	const [token, setToken] = useState(null);
+
+	useEffect(() => {
+		const fetchToken = async () => {
+			const response = await fetch(
+				"http://localhost:8000/oauth/google/get_token",
+				{
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					credentials: "include",
+				}
+			);
+			if (!response.ok) {
+				console.error("Failed to fetch token");
+				return;
+			}
+			console.log(response)
+			const data = await response.json();
+			setToken(data.access_token);
+		};
+		fetchToken();
+	}, []);
 
 	function handleFileUpload(event) {
 		const fileInput = event.target;
@@ -39,7 +63,7 @@ export default function ButtonGroup({
 		openPicker({
 			clientId: process.env.REACT_APP_CLIENT_ID,
 			developerKey: process.env.REACT_APP_API_KEY,
-			// token: authToken,
+			token: token,
 			viewId: "DOCS",
 			showUploadView: true,
 			showUploadFolders: true,
