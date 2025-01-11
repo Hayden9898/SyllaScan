@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import { Link } from "react-router-dom";
 import ButtonGroup from "./ButtonGroup.jsx";
 import FilePreview from "./FilePreview.jsx";
 
@@ -9,8 +10,7 @@ export default function DrivePicker({
 	fileLinks,
 	setFileLinks,
 	localFiles,
-	setLocalFiles,
-	setScreen,
+	setLocalFiles
 }) {
 	useEffect(() => {
 		return () => {
@@ -45,28 +45,29 @@ export default function DrivePicker({
 			</div>
 			{(fileLinks.length > 0 || localFiles.length > 0) && (
 				<div className="continue-button-container">
-					<button
-						style={{
-							position: "relative",
-							display: "inline-block",
-							cursor: "pointer",
-							outline: "none",
-							border: 0,
-							verticalAlign: "middle",
-							textDecoration: "none",
-							background: "transparent",
-							padding: 0,
-							fontSize: "inherit",
-							fontFamily: "inherit",
-						}}
-						className="continue"
-						onClick={() => setScreen("export")}
-					>
-						<span className="circle" aria-hidden="true">
-							<span className="icon arrow"></span>
-						</span>
-						<span className="button-text">Continue</span>
-					</button>
+					<Link to="/export">
+						<button
+							style={{
+								position: "relative",
+								display: "inline-block",
+								cursor: "pointer",
+								outline: "none",
+								border: 0,
+								verticalAlign: "middle",
+								textDecoration: "none",
+								background: "transparent",
+								padding: 0,
+								fontSize: "inherit",
+								fontFamily: "inherit",
+							}}
+							className="continue"
+						>
+							<span className="circle" aria-hidden="true">
+								<span className="icon arrow"></span>
+							</span>
+							<span className="button-text">Continue</span>
+						</button>
+					</Link>
 				</div>
 			)}
 		</div>

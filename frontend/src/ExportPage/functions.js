@@ -80,7 +80,7 @@ function handleFileDeleteAll(localFiles, fileLinks, setFileLinks, setLocalFiles)
     setLocalFiles([]);
 }
 
-export async function handleExportClick(e, selectedBox, setError, setScreen, fileLinks, localFiles, setFileLinks, setLocalFiles, setResults, setLoginType) {
+export async function handleExportClick(e, selectedBox, setError, fileLinks, localFiles, setFileLinks, setLocalFiles, setResults, setLoginType, navigate) {
     if (!selectedBox) {
         setError("Please select an export method");
         return;
@@ -94,14 +94,12 @@ export async function handleExportClick(e, selectedBox, setError, setScreen, fil
             return { ok: false, reason: "calendar" };
         }
 
-        setScreen("processing");
-
         const fileData = await uploadFiles(fileLinks, localFiles, setFileLinks, setLocalFiles);
         if (fileData.ok) {
             setResults(fileData.data);
         } else {
             setError(`Failed to upload files ${fileData}`)
-            setScreen("error");
+            navigate("/error");
         }
 
         const cal_res = await fetch("http://localhost:8000/google/export/gcal", {
@@ -116,10 +114,10 @@ export async function handleExportClick(e, selectedBox, setError, setScreen, fil
         console.log(cal_res)
 
         if (cal_res.ok) {
-            setScreen("results");
+            navigate("/results");
         } else {
             setError("Failed to export to Google Calendar");
-            setScreen("error");
+            navigate("/error");
             return { ok: false, reason: "gcal" };
         }
     }
