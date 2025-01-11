@@ -11,7 +11,6 @@ import Results from 'Results/page';
 import 'css/App.css';
 
 function App() {
-  const [screen, setScreen] = useState('home');
   const [fileLinks, setFileLinks] = useState(new Set());
   const [localFiles, setLocalFiles] = useState([]);
   const [results, setResults] = useState(null);
@@ -19,52 +18,38 @@ function App() {
   const Layout = ({ children }) => {
     return (
       <>
-        <Nav setScreen={setScreen} />
+        <Nav />
         <Outlet />
       </>
     );
   }
 
   return (
-    <>
-      <Nav setScreen={setScreen} />
-      {
-        screen === 'home' &&
-        <Home setScreen={setScreen} />
-      }
-      {
-        screen === 'drive' &&
-        <DrivePicker
-          fileLinks={fileLinks}
-          setFileLinks={setFileLinks}
-          localFiles={localFiles}
-          setLocalFiles={setLocalFiles}
-          setScreen={setScreen}
-        />
-      }
-      {
-        screen === 'export' &&
-        <ExportPage
-          fileLinks={fileLinks}
-          setFileLinks={setFileLinks}
-          localFiles={localFiles}
-          setLocalFiles={setLocalFiles}
-          setResults={setResults}
-          setScreen={setScreen}
-        />
-      }
-      {
-        screen === 'processing' &&
-        <Loader message={"Please wait for your results"} />
-      }
-      {
-        screen === 'results' &&
-        <Results
-          results={results}
-          setScreen={setScreen}
-        />
-      }
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="upload" element={
+            <DrivePicker
+              fileLinks={fileLinks}
+              setFileLinks={setFileLinks}
+              localFiles={localFiles}
+              setLocalFiles={setLocalFiles} />
+          } />
+          <Route path="export" element={
+            <ExportPage
+              fileLinks={fileLinks}
+              setFileLinks={setFileLinks}
+              localFiles={localFiles}
+              setLocalFiles={setLocalFiles}
+              setResults={setResults} />
+          } />
+          <Route path="processing" element={<Loader message={"Please wait while we process your results"} />} />
+          <Route path="results" element={<Results results={results} />} />
+          {/* <Route path="*" element={<NoPage />} /> */}
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

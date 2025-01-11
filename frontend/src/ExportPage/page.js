@@ -2,18 +2,20 @@ import { useState } from "react";
 import SelectableBoxRow from "./BoxSelect";
 import { handleExportClick } from "./functions";
 import GoogleLogin from 'Login/Google';
+import { useNavigate } from "react-router-dom";
 
 
-export default function ExportPage({ fileLinks, setFileLinks, localFiles, setLocalFiles, setResults, setScreen }) {
+export default function ExportPage({ fileLinks, setFileLinks, localFiles, setLocalFiles, setResults }) {
     const [selectedBox, setSelectedBox] = useState(null);
     const [error, setError] = useState(null);
     const [loginType, setLoginType] = useState(null);
+    const navigate = useNavigate();
 
     return (
         loginType === "google" ? (
             <GoogleLogin callback={
                 (credentialResponse) => {
-                    handleExportClick(null, selectedBox, setError, setScreen, fileLinks, localFiles, credentialResponse, setFileLinks, setLocalFiles, setResults, setLoginType);
+                    handleExportClick(null, selectedBox, setError, fileLinks, localFiles, credentialResponse, setFileLinks, setLocalFiles, setResults, setLoginType, navigate);
                 }} />
         ) : (
             <>
@@ -28,7 +30,7 @@ export default function ExportPage({ fileLinks, setFileLinks, localFiles, setLoc
                     <button
                         className="upload-cloud-but flex items-center content-center"
                         onClick={async (e) => {
-                            handleExportClick(e, selectedBox, setError, setScreen, fileLinks, localFiles, setFileLinks, setLocalFiles, setResults, setLoginType);
+                            handleExportClick(e, selectedBox, setError, fileLinks, localFiles, setFileLinks, setLocalFiles, setResults, setLoginType, navigate);
                         }}>
                         <img
                             alt="cloud"

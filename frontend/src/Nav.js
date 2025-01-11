@@ -17,6 +17,7 @@ export default function Nav() {
 
         fetchLoginStatus();
     }, []);
+
     return (
         <nav className="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
             <div className="container-fluid">
