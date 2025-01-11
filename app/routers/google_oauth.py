@@ -116,14 +116,18 @@ def revoke_token(request: Request):
     """
     access_token = request.cookies.get("access_token")
     if access_token:
-        revoke_url = f"https://oauth2.googleapis.com/revoke?token={access_token}"
+        revoke_url = "https://oauth2.googleapis.com/revoke"
         try:
-            response = requests.post(revoke_url, timeout=10)
-            response.raise_for_status()
+            response = requests.post(
+                revoke_url,
+                data={"token": access_token},
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+                timeout=10,
+            )
+            if response.status_code != 200:
+                print("Token is invalid or already revoked.")
         except Exception as e:
-            raise HTTPException(
-                status_code=500, detail=f"Token revoke failed: {str(e)}"
-            ) from None
+            print(f"Token revoke request failed: {e}, {response.content}")
 
     response = RedirectResponse(url="http://localhost:3000", status_code=303)
     response.delete_cookie("access_token")

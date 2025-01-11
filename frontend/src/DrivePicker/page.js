@@ -40,7 +40,7 @@ export default function DrivePicker({
 					setLocalFiles={setLocalFiles}
 					setFileLinks={setFileLinks}
 					fileLinks={fileLinks}
-					className={"absolute top-[75%]"}
+					className={"absolute top-[75%] left-[50%] translate-x-[-50%] -translate-y-1/2"}
 				/>
 			</div>
 			{(fileLinks.length > 0 || localFiles.length > 0) && (

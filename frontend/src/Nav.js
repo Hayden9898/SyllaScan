@@ -2,6 +2,7 @@ import { FaLinkedin, FaGithub } from 'react-icons/fa';
 import Button from 'components/Button';
 import { handleSignOut, checkLoginStatus } from 'Login/functions';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Nav() {
     const [loggedIn, setLoggedIn] = useState(false);
@@ -21,7 +22,7 @@ export default function Nav() {
     return (
         <nav className="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
             <div className="container-fluid">
-                <a className="navbar-brand" href="#">Navbar</a>
+                <Link className="navbar-brand" to="/">Navbar</Link>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                 </button>

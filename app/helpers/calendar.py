@@ -89,8 +89,7 @@ def convert_to_gcal(events_json: json) -> List[Dict]:
             # Create Google Calendar event
             gcal_event = {
                 "summary": event["summary"],
-                "description": (event["description"] or "")
-                + "\n\n"
+                "description": (event["description"] + "\n\n" if event.get("description") else "")
                 + (event.get("misc_info") or ""),
                 "location": event["location"] or "",
                 "start": {

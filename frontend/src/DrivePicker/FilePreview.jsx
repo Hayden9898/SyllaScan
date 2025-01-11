@@ -1,4 +1,5 @@
 import { MdClose } from "react-icons/md";
+import { handleFileDelete, handleURLDelete } from "./functions";
 
 export default function FilePreview({
 	fileLinks,
@@ -6,17 +7,6 @@ export default function FilePreview({
 	setFileLinks,
 	setLocalFiles,
 }) {
-	function handleURLDelete(url) {
-		setFileLinks((prevFiles) => prevFiles.filter((f) => f !== url));
-	}
-
-	function handleFileDelete(file) {
-		URL.revokeObjectURL(file.previewUrl); // Revoke URL to free memory
-		setLocalFiles((prevFiles) =>
-			prevFiles.filter((f) => f.file.name !== file.file.name)
-		);
-	}
-
 	return (
 		<>
 			<div className="d-flex flex-row gap-2 mx-2 overflow-x-auto">
@@ -37,7 +27,7 @@ export default function FilePreview({
 							<div className="position-absolute">
 								<button
 									className="btn btn-danger"
-									onClick={() => handleURLDelete(file_id)}
+									onClick={() => handleURLDelete(file_id, setFileLinks)}
 								>
 									<MdClose />
 								</button>
@@ -64,7 +54,7 @@ export default function FilePreview({
 							<button
 								className="btn btn-danger"
 								onClick={() =>
-									handleFileDelete(localFiles[index])
+									handleFileDelete(localFiles[index], setLocalFiles)
 								}
 							>
 								<MdClose />

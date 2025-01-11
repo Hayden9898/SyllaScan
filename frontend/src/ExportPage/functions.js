@@ -1,4 +1,5 @@
 import { checkScopes } from 'Login/functions';
+import { login } from 'Login/functions';
 
 export async function uploadFiles(fileLinks, localFiles, setFileLinks, setLocalFiles) {
     const formData = new FormData();
@@ -70,7 +71,7 @@ async function fetchFiles(fileLinks) {
 }
 
 function handleFileDeleteAll(localFiles, fileLinks, setFileLinks, setLocalFiles) {
-    localFiles.forEach(({ file, previewUrl }, index) => {
+    localFiles.forEach(({ previewUrl }) => {
         URL.revokeObjectURL(previewUrl);
     });
     fileLinks.forEach((file_id) => {
@@ -80,7 +81,7 @@ function handleFileDeleteAll(localFiles, fileLinks, setFileLinks, setLocalFiles)
     setLocalFiles([]);
 }
 
-export async function handleExportClick(e, selectedBox, setError, fileLinks, localFiles, setFileLinks, setLocalFiles, setResults, setLoginType, navigate) {
+export async function handleExportClick(e, selectedBox, setError, fileLinks, localFiles, setFileLinks, setLocalFiles, setResults, navigate) {
     if (!selectedBox) {
         setError("Please select an export method");
         return;
@@ -90,9 +91,10 @@ export async function handleExportClick(e, selectedBox, setError, fileLinks, loc
         const hasAccess = await checkScopes();
 
         if (!hasAccess) {
-            setLoginType("google");
-            return { ok: false, reason: "calendar" };
+            login();
         }
+
+        navigate("/processing");
 
         const fileData = await uploadFiles(fileLinks, localFiles, setFileLinks, setLocalFiles);
         if (fileData.ok) {
@@ -111,21 +113,16 @@ export async function handleExportClick(e, selectedBox, setError, fileLinks, loc
             body: JSON.stringify(fileData.data),
         });
 
-        console.log(cal_res)
-
         if (cal_res.ok) {
-            navigate("/results");
+            const calendarId = await cal_res.json();
+            setResults(calendarId.calendar_id);
+            navigate("/results/google");
         } else {
             setError("Failed to export to Google Calendar");
             navigate("/error");
             return { ok: false, reason: "gcal" };
         }
     }
-
-    // const res = await uploadFiles(fileLinks, localFiles, setFileLinks, setLocalFiles);
-    // if (res.ok) {
-    //     setResults(res.data);
-    // }
 
     if (selectedBox === "Notion") {
         setError("Notion export not yet supported");
@@ -139,12 +136,4 @@ export async function handleExportClick(e, selectedBox, setError, fileLinks, loc
         setError("Google Sheets export not yet supported");
         return;
     }
-    // setScreen('processing');
-    // const res = await uploadFiles(fileLinks, localFiles, setFileLinks, setLocalFiles);
-    // if (res.ok) {
-    //     setResults(res.data);
-    //     setScreen('results');
-    // } else {
-    //     setScreen('error');
-    // }
 }
