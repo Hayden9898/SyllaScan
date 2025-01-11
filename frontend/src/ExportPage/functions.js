@@ -94,6 +94,8 @@ export async function handleExportClick(e, selectedBox, setError, setScreen, fil
             return { ok: false, reason: "calendar" };
         }
 
+        setScreen("processing");
+
         const fileData = await uploadFiles(fileLinks, localFiles, setFileLinks, setLocalFiles);
         if (fileData.ok) {
             setResults(fileData.data);
@@ -107,6 +109,7 @@ export async function handleExportClick(e, selectedBox, setError, setScreen, fil
             headers: {
                 "Content-Type": "application/json",
             },
+            credentials: "include",
             body: JSON.stringify(fileData.data),
         });
 

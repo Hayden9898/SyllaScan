@@ -70,7 +70,7 @@ class GoogleOAuth:
             except Exception as e:
                 raise HTTPException(
                     status_code=500, detail=f"Failed to refresh token: {str(e)}"
-                )
+                ) from e
 
         return credentials
 
@@ -114,4 +114,4 @@ class GoogleOAuth:
         except requests.exceptions.RequestException as e:
             raise HTTPException(
                 status_code=500, detail=f"Token retrieval failed: {str(e)}"
-            )
+            ) from e

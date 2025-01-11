@@ -9,7 +9,7 @@ import "css/Calendar.css"
 import { useEffect, useState } from "react";
 
 
-export default function Results({ results, setScreen }) {
+export default function Results({ results }) {
     const [calendarEvents, setCalendarEvents] = useState([]);
     useEffect(() => {
         convertToCalendar(results, setCalendarEvents);

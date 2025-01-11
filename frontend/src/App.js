@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 
+import Loader from 'components/Loader';
 import DrivePicker from 'DrivePicker/DrivePicker';
-import Loader from 'DrivePicker/Loader';
 import ExportPage from 'ExportPage/page';
+import Home from 'Home/page';
 import Nav from 'Nav';
 import Results from 'Results/page';
-import Home from 'Home/page'
 
 import 'css/App.css';
 
@@ -14,6 +15,16 @@ function App() {
   const [fileLinks, setFileLinks] = useState(new Set());
   const [localFiles, setLocalFiles] = useState([]);
   const [results, setResults] = useState(null);
+
+  const Layout = ({ children }) => {
+    return (
+      <>
+        <Nav setScreen={setScreen} />
+        <Outlet />
+      </>
+    );
+  }
+
   return (
     <>
       <Nav setScreen={setScreen} />
