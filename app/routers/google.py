@@ -3,6 +3,7 @@ import uuid
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Request, UploadFile
 from googleapiclient.discovery import build
+from helpers.calendar import convert_to_gcal
 from helpers.google_credentials import GoogleOAuth
 from helpers.openai import process_upload
 from httpx import AsyncClient
@@ -12,7 +13,7 @@ oauth = GoogleOAuth()
 
 
 @router.post("/get_files")
-async def get_files(request: Request, background_tasks: BackgroundTasks):
+async def get_files(request: Request, background_tasks: BackgroundTasks) -> dict:
     files = await request.json()
 
     if not files or not isinstance(files, list):
@@ -92,28 +93,28 @@ async def get_files(request: Request, background_tasks: BackgroundTasks):
 
 
 @router.post("/export/gcal")
-async def export_to_gcal(request: Request):
+async def export_to_gcal(request: Request) -> dict:
     data = await request.json()
 
-    token = request.cookies.get("access_token")
-
-    # Use the token to create credentials
     credentials = oauth.get_credentials(request)
-
-    # Build the Google Calendar API client
     service = build("calendar", "v3", credentials=credentials)
 
-    # Create a new calendar
-    calendar = {"summary": "SyllabusScanner Calendar", "timeZone": "America/Toronto"}
+    calendar = {"summary": "SyllaScan Calendar", "timeZone": "America/Toronto"}
     created_calendar = service.calendars().insert(body=calendar).execute()
 
     print(f"Created calendar: {created_calendar['summary']}")
     print(f"Calendar ID: {created_calendar['id']}")
 
-    # Add an event to the new calendar
-    created_event = (
-        service.events().insert(calendarId=created_calendar["id"], body=data).execute()
-    )
+    data = convert_to_gcal(data)
 
-    print(f"Event created: {created_event['htmlLink']}")
-    return created_calendar["id"]
+    for event in data:
+        created_event = (
+            service.events().insert(calendarId=created_calendar["id"], body=event).execute()
+        )
+
+        print(f"Event created: {created_event['htmlLink']}")
+
+    return {
+        "calendar_id": created_calendar["id"],
+        "ok": True,
+    }

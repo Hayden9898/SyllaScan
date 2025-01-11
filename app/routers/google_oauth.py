@@ -1,6 +1,4 @@
-import os
 import secrets
-from urllib.parse import urlencode
 
 import requests
 from fastapi import APIRouter, HTTPException, Request, Response
