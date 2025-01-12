@@ -113,6 +113,7 @@ export default function ButtonGroup({
 				<GoogleLogin
 					redirect={"/upload"}
 					callback={handleOpenPicker}
+					text={"Google Drive"}
 				/>
 			</div>
 		</div>

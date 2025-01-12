@@ -1,6 +1,7 @@
 import Button from 'components/Button'
 import Slideshow from './slideshow'
 import { Link } from 'react-router-dom'
+import { FaArrowRight } from 'react-icons/fa'
 
 export default function Home() {
     return (
@@ -10,6 +11,12 @@ export default function Home() {
                     <div className="title">Syllabus Scanner
                         <i><div className="slogan-text">"Conquering Procrastination, one deadline at a time."</div></i>
                     </div>
+                    <Link to="/upload">
+                        <Button className='flex gap-2'>
+                            Continue to App
+                            <FaArrowRight size={20} className='font-thin' />
+                        </Button>
+                    </Link>
                 </div>
                 <div className='title-col'>
                 </div>
@@ -47,15 +54,6 @@ export default function Home() {
                 </div>
                 <div className='slideshow'>
                     <Slideshow />
-                </div>
-            </div>
-            <div className='wrapper-container'>
-                <div className='mx-auto justify-self-center'>
-                    <Link to="/upload">
-                        <Button>
-                            Continue to App
-                        </Button>
-                    </Link>
                 </div>
             </div>
         </>
