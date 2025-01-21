@@ -54,6 +54,7 @@
 
 .continue-button-container {
 	padding: 20px 0;
+	padding-bottom: 60px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -149,8 +150,8 @@ button:hover .button-text {
 	justify-content: center;
 	align-items: center;
 	padding: 40px;
-	padding-top: 250px;
 	padding-bottom: 100px;
+	padding-top: 220px;
 }
 
 .upload-file-label h1{
@@ -170,4 +171,8 @@ button:hover .button-text {
 	background: url('https://wallpapershome.com/images/pages/pic_h/26760.jpg');
 	background-size: cover;
 	background-repeat: no-repeat;
+}
+
+h1{
+	padding: 10px;
 }

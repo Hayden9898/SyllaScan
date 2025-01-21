@@ -1,3 +1,5 @@
 .description {
 	margin-top: 30px; /* Adjust the space between the box and the description */
+	font-size: 20px;
+	font-weight: 500;
 }

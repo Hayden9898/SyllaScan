@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SelectableBoxRow from "./BoxSelect";
 import { handleExportClick } from "./functions";
 import { useNavigate } from "react-router-dom";
+import "../css/Export.css"
 
 
 export default function ExportPage({ fileLinks, setFileLinks, localFiles, setLocalFiles, results, setResults }) {
@@ -18,29 +19,33 @@ export default function ExportPage({ fileLinks, setFileLinks, localFiles, setLoc
 
     return (
         <>
-            <h1 className="text-center">
-                Select a platform to export to
-            </h1>
-            {
-                error &&
-                <h2 className="text-center text-red-700">
-                    {error}
-                </h2>
-            }
-            <SelectableBoxRow selectedBox={selectedBox} setSelectedBox={setSelectedBox} />
-            <div className="cloud-button-container">
-                <button
-                    className="upload-cloud-but flex items-center content-center"
-                    onClick={async (e) => {
-                        handleExportClick(e, selectedBox, setError, fileLinks, localFiles, setFileLinks, setLocalFiles, setResults, navigate);
-                    }}>
-                    <img
-                        alt="cloud"
-                        className="padded-logo-cloud"
-                        src="https://cdn.icon-icons.com/icons2/3214/PNG/512/cloud_file_upload_server_icon_196427.png"
-                    />
-                    Upload
-                </button>
+            <div className="background-export">
+                <h1 className="export-title">
+                    Step 2: Select a platform to export to!
+                </h1>
+                {
+                    error &&
+                    <h2 className="text-center text-red-700">
+                        {error}
+                    </h2>
+                }
+                <SelectableBoxRow selectedBox={selectedBox} setSelectedBox={setSelectedBox} />
+                <div className="spacer"></div>
+                <div className="cloud-button-container">
+                    <button
+                        className="upload-cloud-but flex items-center content-center"
+                        onClick={async (e) => {
+                            handleExportClick(e, selectedBox, setError, fileLinks, localFiles, setFileLinks, setLocalFiles, setResults, navigate);
+                        }}>
+                        <img
+                            alt="cloud"
+                            className="padded-logo-cloud"
+                            src="https://cdn.icon-icons.com/icons2/3214/PNG/512/cloud_file_upload_server_icon_196427.png"
+                        />
+                        Upload
+                    </button>
+                </div>
+                
             </div>
         </>
     )
