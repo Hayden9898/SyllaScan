@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 
 import Nav from 'Nav';
@@ -12,14 +12,24 @@ import Loader from 'components/Loader';
 import DefaultCal from 'Results/components/DefaultCal';
 import GCalResults from 'Results/components/GCal';
 
-import { usePersistentState } from 'components/PersistentState';
-
+import { getAllFiles } from 'indexedDb';
 import 'css/App.css';
 
 function App() {
   const [fileLinks, setFileLinks] = useState(new Set());
-  const [localFiles, setLocalFiles] = usePersistentState("localFiles", []);
+  const [localFiles, setLocalFiles] = useState([]);
   const [results, setResults] = useState(null);
+
+  useEffect(() => {
+    const getFiles = async () => {
+      const files = await getAllFiles();
+      if (files.length !== localFiles.length) {
+        setLocalFiles(files);
+      }
+    };
+
+    getFiles();
+  }, [localFiles]);
 
   const Layout = ({ children }) => {
     return (
@@ -51,7 +61,7 @@ function App() {
               results={results}
               setResults={setResults} />
           } />
-          <Route path="processing" element={<Loader message={"Please wait while we process your results"} />} />
+          <Route path="processing" element={<div className='w-screen h-screen bg-black items-center content-center'><Loader message={"Please wait while we process your results"} /></div>} />
           <Route path="error" element={<Loader message={"An error occurred while processing your request"} />} />
           <Route path="/results" element={<Results results={results} />}>
             <Route index element={<DefaultCal results={results} />} />

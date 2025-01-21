@@ -1,3 +1,4 @@
+import { deleteAllFiles } from 'indexedDb';
 import { checkScopes } from 'Login/functions';
 import { login } from 'Login/functions';
 
@@ -23,7 +24,7 @@ export async function uploadFiles(fileLinks, localFiles, setFileLinks, setLocalF
         }
 
         // Cleanup and reset state
-        handleFileDeleteAll(localFiles, fileLinks, setFileLinks, setLocalFiles);
+        handleFileDeleteAll(setFileLinks, setLocalFiles);
 
         return { ok: ret.length > 0, data: ret };
     } catch (err) {
@@ -34,7 +35,7 @@ export async function uploadFiles(fileLinks, localFiles, setFileLinks, setLocalF
 
 async function uploadLocalFiles(localFiles, formData) {
     localFiles.forEach((file) => {
-        formData.append("files", file.file);
+        formData.append("files", file.content);
     });
 
     const response = await fetch("http://localhost:8000/upload", {
@@ -70,13 +71,8 @@ async function fetchFiles(fileLinks) {
     return await response.json();
 }
 
-function handleFileDeleteAll(localFiles, fileLinks, setFileLinks, setLocalFiles) {
-    localFiles.forEach(({ previewUrl }) => {
-        URL.revokeObjectURL(previewUrl);
-    });
-    fileLinks.forEach((file_id) => {
-        URL.revokeObjectURL(`https://drive.google.com/file/d/${file_id}/preview?usp=drive_web`);
-    });
+export async function handleFileDeleteAll(setFileLinks, setLocalFiles) {
+    await deleteAllFiles();
     setFileLinks(new Set());
     setLocalFiles([]);
 }

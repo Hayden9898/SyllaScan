@@ -99,11 +99,17 @@ async def export_to_gcal(request: Request) -> dict:
     credentials = oauth.get_credentials(request)
     service = build("calendar", "v3", credentials=credentials)
 
-    calendar = {"summary": "SyllaScan Calendar", "timeZone": "America/Toronto"}
-    created_calendar = service.calendars().insert(body=calendar).execute()
+    calendars = service.calendarList().list().execute()
 
-    print(f"Created calendar: {created_calendar['summary']}")
-    print(f"Calendar ID: {created_calendar['id']}")
+    created_calendar = None
+
+    for calendar in calendars.get("items", []):
+        if calendar.get("summary") == "SyllaScan Calendar": # Check if the calendar already exists
+            created_calendar = calendar
+
+    if not created_calendar:
+        calendar = {"summary": "SyllaScan Calendar", "timeZone": "America/Toronto"}
+        created_calendar = service.calendars().insert(body=calendar).execute()
 
     data = convert_to_gcal(data)
 
