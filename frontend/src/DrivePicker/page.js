@@ -12,7 +12,7 @@ export default function DrivePicker({
 }) {
 	return (
 		<div className="background">
-			<div className="d-flex flex-column justify-content-center">
+			<div className="flex flex-column justify-content-center">
 				<div className="upload-file-label">
 					<h1>
 						Get Started: Upload your syllabus via Local or Google
@@ -20,17 +20,16 @@ export default function DrivePicker({
 					</h1>
 					<p>Let us do the organizing for you</p>
 				</div>
+				<ButtonGroup
+					setLocalFiles={setLocalFiles}
+					setFileLinks={setFileLinks}
+					fileLinks={fileLinks}
+				/>
 				<FilePreview
 					fileLinks={fileLinks}
 					localFiles={localFiles}
 					setFileLinks={setFileLinks}
 					setLocalFiles={setLocalFiles}
-				/>
-				<ButtonGroup
-					setLocalFiles={setLocalFiles}
-					setFileLinks={setFileLinks}
-					fileLinks={fileLinks}
-					className={"absolute top-[75%] left-[50%] translate-x-[-50%] -translate-y-1/2"}
 				/>
 			</div>
 			{(fileLinks.length > 0 || localFiles.length > 0) && (
