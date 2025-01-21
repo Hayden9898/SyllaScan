@@ -15,11 +15,11 @@ prod-front:
 
 # Run the server
 prod-back:
-	cd app && uvicorn $(MODULE) --host $(HOST) --port $(PORT)
+	cd app && uvicorn $(MODULE) --host $(HOST) --port $(PORT) --env-file .env
 
 # Start the server with reload
 dev-back:
-	cd app && uvicorn $(MODULE) --host $(HOST) --port $(PORT) --reload --log-level debug
+	cd app && uvicorn $(MODULE) --host $(HOST) --port $(PORT) --reload --log-level debug --env-file .env
 
 # Start the frontend
 dev-front:
