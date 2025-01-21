@@ -1,10 +1,12 @@
-function handleURLDelete(url, setFileLinks) {
+import { deleteFile } from "indexedDb";
+
+export function handleURLDelete(url, setFileLinks) {
     setFileLinks((prevFiles) => prevFiles.filter((f) => f !== url));
 }
 
-function handleFileDelete(file, setLocalFiles) {
-    URL.revokeObjectURL(file.previewUrl); // Revoke URL to free memory
+export function handleFileDelete(file, setLocalFiles) {
+    deleteFile(file.id);
     setLocalFiles((prevFiles) =>
-        prevFiles.filter((f) => f.file.name !== file.file.name)
+        prevFiles.filter((f) => f.id !== file.id)
     );
 }

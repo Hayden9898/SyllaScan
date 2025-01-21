@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import { Link } from "react-router-dom";
 import ButtonGroup from "./ButtonGroup.jsx";
 import FilePreview from "./FilePreview.jsx";
@@ -12,14 +10,6 @@ export default function DrivePicker({
 	localFiles,
 	setLocalFiles
 }) {
-	useEffect(() => {
-		return () => {
-			localFiles.forEach(({ previewUrl }) => {
-				URL.revokeObjectURL(previewUrl);
-			});
-		};
-	}, [localFiles]);
-
 	return (
 		<div className="background">
 			<div className="d-flex flex-column justify-content-center">
