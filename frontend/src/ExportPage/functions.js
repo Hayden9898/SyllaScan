@@ -1,5 +1,4 @@
 import { deleteAllFiles } from 'indexedDb';
-import { checkScopes } from 'Login/functions';
 import { login } from 'Login/functions';
 
 export async function uploadFiles(fileLinks, localFiles, setFileLinks, setLocalFiles) {
@@ -24,7 +23,8 @@ export async function uploadFiles(fileLinks, localFiles, setFileLinks, setLocalF
         }
 
         // Cleanup and reset state
-        handleFileDeleteAll(setFileLinks, setLocalFiles);
+        if (ret.length > 0) await
+            handleFileDeleteAll(setFileLinks, setLocalFiles);
 
         return { ok: ret.length > 0, data: ret };
     } catch (err) {
@@ -84,38 +84,36 @@ export async function handleExportClick(e, selectedBox, setError, fileLinks, loc
     }
 
     if (selectedBox === "Google Calendar") {
-        const hasAccess = await checkScopes();
-
-        if (!hasAccess) {
-            login("/export");
-        }
+        const res = await login("/export");
 
         navigate("/processing");
 
-        const fileData = await uploadFiles(fileLinks, localFiles, setFileLinks, setLocalFiles);
-        if (fileData.ok) {
-            setResults(fileData.data);
-        } else {
-            navigate("/error?reason=upload");
-            return;
-        }
+        if (res) {
+            const fileData = await uploadFiles(fileLinks, localFiles, setFileLinks, setLocalFiles);
+            if (fileData.ok) {
+                setResults(fileData.data);
+            } else {
+                navigate("/error?reason=upload");
+                return;
+            }
 
-        const cal_res = await fetch("http://localhost:8000/google/export/gcal", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify(fileData.data),
-        });
+            const cal_res = await fetch("http://localhost:8000/google/export/gcal", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(fileData.data),
+            });
 
-        if (cal_res.ok) {
-            const calendarId = await cal_res.json();
-            setResults(calendarId.calendar_id);
-            navigate("/results/google");
-        } else {
-            navigate("/error?reason=gcal");
-            return;
+            if (cal_res.ok) {
+                const calendarId = await cal_res.json();
+                setResults(calendarId.calendar_id);
+                navigate("/results/google");
+            } else {
+                navigate("/error?reason=gcal");
+                return;
+            }
         }
     }
 

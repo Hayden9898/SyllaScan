@@ -31,7 +31,6 @@ export default function ButtonGroup({
 				console.error("Failed to fetch token");
 				return;
 			}
-			console.log(response)
 			const data = await response.json();
 			setToken(data.access_token);
 		};

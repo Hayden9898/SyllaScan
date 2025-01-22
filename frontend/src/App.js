@@ -19,17 +19,19 @@ function App() {
   const [fileLinks, setFileLinks] = useState(new Set());
   const [localFiles, setLocalFiles] = useState([]);
   const [results, setResults] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getFiles = async () => {
+      setLoading(true);
       const files = await getAllFiles();
       if (files.length !== localFiles.length) {
         setLocalFiles(files);
       }
+      setLoading(false);
     };
-
     getFiles();
-  }, [localFiles]);
+  }, [localFiles, setResults, setLocalFiles]);
 
   const Layout = ({ children }) => {
     return (
@@ -59,13 +61,15 @@ function App() {
               localFiles={localFiles}
               setLocalFiles={setLocalFiles}
               results={results}
-              setResults={setResults} />
+              setResults={setResults}
+              loading={loading}
+            />
           } />
           <Route path="processing" element={<div className='w-screen h-screen bg-black items-center content-center'><Loader message={"Please wait while we process your results"} /></div>} />
           <Route path="error" element={<Loader message={"An error occurred while processing your request"} />} />
           <Route path="/results" element={<Results results={results} />}>
             <Route index element={<DefaultCal results={results} />} />
-            <Route path="/results/google" element={<GCalResults calendarId={results}/>} />
+            <Route path="/results/google" element={<GCalResults calendarId={results} />} />
           </Route>
           {/* <Route path="*" element={<NoPage />} /> */}
         </Route>

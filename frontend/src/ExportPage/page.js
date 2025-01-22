@@ -5,17 +5,18 @@ import { useNavigate } from "react-router-dom";
 import "../css/Export.css"
 
 
-export default function ExportPage({ fileLinks, setFileLinks, localFiles, setLocalFiles, results, setResults }) {
+export default function ExportPage({ fileLinks, setFileLinks, localFiles, setLocalFiles, results, setResults, loading }) {
     const [selectedBox, setSelectedBox] = useState(null);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         // If there are no files or results, redirect to the upload page
-        if ((!fileLinks || fileLinks.size === 0) && (!localFiles || localFiles.length === 0) && !results) {
+        if (!loading && (!fileLinks || fileLinks.size === 0) && (!localFiles || localFiles.length === 0) && !results) {
+            console.log("No files or results, redirecting to upload page");
             navigate("/upload");
         }
-    }, [fileLinks, localFiles, navigate, results]);
+    }, [fileLinks, localFiles, navigate, results, loading]);
 
     return (
         <>
