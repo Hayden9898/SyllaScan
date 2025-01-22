@@ -83,6 +83,22 @@ export async function handleExportClick(e, selectedBox, setError, fileLinks, loc
         return;
     }
 
+    if (selectedBox === "Calendar File") {
+        const fileData = await uploadFiles(fileLinks, localFiles, setFileLinks, setLocalFiles);
+        if (fileData.ok) {
+            setResults(fileData.data);
+            navigate("/results");
+        } else {
+            navigate("/error?reason=upload");
+            return;
+        }
+    }
+
+    if (selectedBox === "Outlook") {
+        setError("Outlook export not yet supported");
+        return;
+    }
+
     if (selectedBox === "Google Calendar") {
         const res = await login("/export");
 

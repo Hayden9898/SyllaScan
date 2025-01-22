@@ -9,6 +9,18 @@ const SelectableBoxRow = ({ selectedBox, setSelectedBox }) => {
 	// Array to hold the data for each box
 	const boxInfo = [
 		{
+			description: "Calendar File",
+			bgColor: "#99ff99",
+			imageUrl:
+				"https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg",
+		},
+		{
+			description: "Outlook",
+			bgColor: "#ffcc99",
+			imageUrl:
+				"https://upload.wikimedia.org/wikipedia/commons/7/7e/Outlook_icon.svg",
+		},
+		{
 			description: "Google Calendar",
 			bgColor: "#ff9999",
 			imageUrl:
