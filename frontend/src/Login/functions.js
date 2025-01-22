@@ -15,10 +15,12 @@ export async function checkScopes() {
         },
         credentials: "include"
     });
+    console.log(res)
     if (!res.ok) {
         throw new Error("Failed to check Google scopes");
     }
     const hasAccess = await res.json();
+    console.log(hasAccess)
     return hasAccess.has_scopes;
 }
 

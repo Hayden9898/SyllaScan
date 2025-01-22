@@ -5,8 +5,10 @@ import tempfile
 from typing import Dict, List
 
 import icalendar
+from dateutil import parser
 from fastapi import BackgroundTasks
 from fastapi.responses import FileResponse
+from pytz import timezone, utc
 
 
 def create_calendar(events_json: json) -> FileResponse:
@@ -108,3 +110,26 @@ def convert_to_gcal(events_json: json) -> List[Dict]:
             print(f"Error processing event: {event}, Error: {e}")
 
     return gcal_events
+
+
+def convert_to_utc(datetime_str, time_zone="America/Toronto"):
+    """
+    Converts a datetime string with a provided timezone to UTC
+    and appends 'Z' to indicate UTC.
+    """
+    # Parse the datetime string
+    dt = parser.isoparse(datetime_str)
+
+    # Ensure the datetime is naive before applying the timezone
+    if dt.tzinfo is None:
+        # Localize with the provided timezone
+        tz = timezone(time_zone)
+        dt = tz.localize(dt)
+    elif dt.tzinfo is not None:
+        raise ValueError("The datetime string already contains timezone information.")
+
+    # Convert to UTC
+    dt_utc = dt.astimezone(utc)
+
+    # Format as ISO 8601 and replace UTC offset with 'Z'
+    return dt_utc.isoformat().replace("+00:00", "Z")

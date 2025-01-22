@@ -111,6 +111,12 @@ def check_scopes(request: Request):
     try:
         credentials = oauth.get_credentials(request)
 
+        if not credentials or not credentials.valid:
+            if credentials and credentials.expired and credentials.refresh_token:
+                credentials.refresh(Request())
+            else:
+                return {"error": "Invalid credentials"}
+
         token_scopes = set(credentials.scopes or [])
         missing_scopes = set(oauth.scopes) - token_scopes
 
