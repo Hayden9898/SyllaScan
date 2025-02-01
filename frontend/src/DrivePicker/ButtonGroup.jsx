@@ -4,7 +4,7 @@ import useDrivePicker from "react-google-drive-picker";
 import Label from "components/Label";
 import GoogleLogin from "Login/Google";
 
-import { addFile } from "indexedDb";
+import { handleFileUpload } from "./functions";
 
 export default function ButtonGroup({
 	setLocalFiles,
@@ -36,35 +36,6 @@ export default function ButtonGroup({
 		};
 		fetchToken();
 	}, []);
-
-	function handleFileUpload(event) {
-		const fileInput = event.target;
-		const files = Array.from(event.target.files);
-
-		if (files.length === 0) return;
-
-		files.forEach(async (file) => {
-			const res = await addFile(file);
-			if (!res) {
-				console.error("Failed to add file to database");
-				return
-			}
-
-			const fileData = {
-				id: res,
-				name: file.name,
-				type: file.type,
-				size: file.size,
-				lastModified: file.lastModified,
-				lastModifiedDate: file.lastModifiedDate,
-				content: file,
-			}
-
-			setLocalFiles((prevFiles) => [...prevFiles, fileData]);
-		});
-
-		fileInput.value = "";
-	}
 
 	const handleOpenPicker = () => {
 		openPicker({
@@ -112,7 +83,7 @@ export default function ButtonGroup({
 					id="file-upload"
 					multiple
 					style={{ display: "none" }}
-					onChange={handleFileUpload}
+					onChange={(e) => handleFileUpload(e, setLocalFiles)}
 				/>
 			</div>
 

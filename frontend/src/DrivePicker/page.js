@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import ButtonGroup from "./ButtonGroup.jsx";
 import FilePreview from "./FilePreview.jsx";
+import { handleFileUpload } from "./functions.js";
 
 import "css/DrivePicker.css";
+import "css/Drop.css";
 
 export default function DrivePicker({
 	fileLinks,
@@ -11,7 +13,10 @@ export default function DrivePicker({
 	setLocalFiles
 }) {
 	return (
-		<div className="background">
+		<div className="background drag-drop"
+			onDrop={(e) => handleFileUpload(e, setLocalFiles)}
+			onDragOver={(event) => event.preventDefault()}
+		>
 			<div className="flex flex-column justify-content-center">
 				<div className="upload-file-label">
 					<h1>
