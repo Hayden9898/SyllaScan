@@ -27,7 +27,7 @@ def validate_state(request: Request, state: str) -> dict:
     try:
         return jwt.decode(state, SECRET_KEY, algorithms=["HS256"])
     except jwt.PyJWTError:
-        raise HTTPException(status_code=400, detail="Invalid state parameter")
+        return {"redirect_to": "/", "nonce": ""}
 
 
 @router.get("/")
@@ -61,24 +61,20 @@ def google_oauth(
 
 @router.get("/callback")
 def google_callback(request: Request, state: str = Depends(validate_state)):
-    try:
-        nonce = state.get("nonce")
-        if not nonce:
-            raise HTTPException(status_code=400, detail="Invalid state")
-        redirect_to = preprocess_redirect_to(state.get("redirect_to", "/"))
-    except Exception as e:
-        print(f"Error decoding state: {e}")
-        redirect_to = "/"
+    redirect_to = preprocess_redirect_to(state.get("redirect_to", "/"))
 
-    token_response = oauth.retrieve_token(request, grant_type="authorization_code")
+    try:
+        # Exchange the authorization code for tokens
+        token_response = oauth.retrieve_token(request, grant_type="authorization_code")
+    except Exception as e:
+        print(f"Error retrieving token: {e}")
+        return RedirectResponse(url=f"/oauth/google?redirect_to={redirect_to}", status_code=303)
 
     # Validate token response
     access_token = token_response.get("access_token")
     refresh_token = token_response.get("refresh_token")
     if not access_token or not refresh_token:
-        raise HTTPException(
-            status_code=500, detail="Token response missing required fields"
-        )
+        return RedirectResponse(url=f"/oauth/google?redirect_to={redirect_to}", status_code=303)
 
     # Create a response to redirect the user
     redirect_url = f"http://localhost:3000{redirect_to}"
@@ -92,6 +88,7 @@ def google_callback(request: Request, state: str = Depends(validate_state)):
         secure=True,
         samesite="None",
     )
+
     response.set_cookie(
         key="refresh_token",
         value=refresh_token,
@@ -104,27 +101,11 @@ def google_callback(request: Request, state: str = Depends(validate_state)):
 
 
 @router.get("/check_scopes")
-def check_scopes(request: Request):
+def call_check_scopes(request: Request):
     """
     Checks if the access token has the required Google OAuth scopes.
     """
-    try:
-        credentials = oauth.get_credentials(request)
-
-        if not credentials or not credentials.valid:
-            if credentials and credentials.expired and credentials.refresh_token:
-                credentials.refresh(Request())
-            else:
-                return {"error": "Invalid credentials"}
-
-        token_scopes = set(credentials.scopes or [])
-        missing_scopes = set(oauth.scopes) - token_scopes
-
-        if missing_scopes:
-            return {"error": f"Missing required scopes: {missing_scopes}"}
-        return {"has_scopes": True}
-    except Exception as e:
-        return {"error": str(e)}
+    return oauth.check_scopes(request)
 
 
 @router.get("/refresh")

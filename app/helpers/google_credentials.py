@@ -7,6 +7,7 @@ from fastapi import Request
 from fastapi.exceptions import HTTPException
 from google.auth.transport.requests import Request as GoogleRequest
 from google.oauth2.credentials import Credentials
+import requests
 
 load_dotenv()
 
@@ -115,3 +116,36 @@ class GoogleOAuth:
             raise HTTPException(
                 status_code=500, detail=f"Token retrieval failed: {str(e)}"
             ) from e
+
+
+    def check_scopes(self, request: Request):
+        """
+        Checks if the access token has the required Google OAuth scopes.
+        """
+        try:
+            token_scopes = self.get_scopes(request.cookies.get("access_token"))
+            missing_scopes = set(self.scopes) - token_scopes
+
+            if missing_scopes:
+                return HTTPException(status_code=401, detail="Insufficient scopes")
+            return {"has_scopes": True}
+        except Exception as e:
+            return HTTPException(status_code=500, detail="Unexpected error")
+
+
+    @staticmethod
+    def get_scopes(access_token: str) -> set[str]:
+        """
+        Calls Google's token info endpoint to retrieve the actual scopes for this token.
+        """
+        response = requests.get(
+            "https://www.googleapis.com/oauth2/v1/tokeninfo",
+            params={"access_token": access_token},
+            timeout=10,
+        )
+        response.raise_for_status()
+        data = response.json()
+
+        # data["scope"] is a space-separated string of scopes
+        token_scopes_str = data.get("scope", "")
+        return set(token_scopes_str.split())
