@@ -5,6 +5,7 @@ import {
     useMotionValueEvent,
     useScroll,
 } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import { checkLoginStatus, handleSignOut } from 'Login/functions';
 import { useEffect, useState } from 'react';
 import { HiBars3, HiXMark } from "react-icons/hi2";
@@ -32,6 +33,12 @@ export default function Nav() {
     const [visible, setVisible] = useState(true);
     const [hasScrolled, setHasScrolled] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
+    const location = useLocation();
+    const isHomePage = location.pathname === "/";
+
+    useEffect(() => {
+        setVisible(true);
+    }, [location.pathname]);
 
     useEffect(() => {
         setIsMounted(true);
@@ -101,7 +108,7 @@ export default function Nav() {
                     duration: 0.2,
                 }}
                 className={cn(
-                    `z-[10] fixed text-center justify-center flex flex-col md:grid grid-cols-3 items-center w-full md:h-[5em] px-8 md:py-3 bg-transparent md:text-sm text-2xl transition-all duration-300 ease-in-out ${open ? "h-full" : mobile && "h-[13%] items-start"
+                    `z-[10] fixed text-center justify-center flex flex-col md:grid grid-cols-3 items-center w-full md:h-[5em] px-8 md:py-3 bg-transparent md:text-sm text-2xl transition-all duration-300 ease-in-out ${open ? "h-full" : mobile && "h-[13%] items-start",  isHomePage ? "bg-transparent" : "bg-gray-900 shadow-md transition-colors duration-500"
                     }`
                 )}
             >
