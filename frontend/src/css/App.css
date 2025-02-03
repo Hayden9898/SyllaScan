@@ -86,6 +86,20 @@
 	justify-content: center ;
 	z-index: 1;
 }
+.title-col .img-box{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	padding:40px;
+
+}
+
+.img-box img{
+	transform: translateY(100px);
+	width: auto;
+	border-radius: 20px;
+}
 .wave {
 	width: 100%;
 	height: auto;

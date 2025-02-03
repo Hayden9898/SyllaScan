@@ -1,15 +1,18 @@
 import React, {useState} from 'react';
 import '../css/SelectableSlideshow.css';
 
+import image1 from '../assets/1.PNG';
+import image2 from '../assets/2.PNG';
+import image3 from '../assets/3.PNG';
 const Slideshow = () => {
-    const [currentImg, setCurrentImg] = useState("https://cdn.pixabay.com/photo/2015/04/04/19/13/one-706897_1280.jpg");
+    const [currentImg, setCurrentImg] = useState(image1);
     
     const [selectedId, setSelectedId] = useState(1);
 
     const slides = [
-        {id: 1, label: 'image 1', description: 'Description 1', image:'https://cdn.pixabay.com/photo/2015/04/04/19/13/one-706897_1280.jpg'},
-        {id: 2, label: 'image 2', description: 'Description 2', image:'https://cdn.pixabay.com/photo/2015/04/04/19/13/two-706896_1280.jpg'},
-        {id: 3, label: 'image 3', description: 'Description 3',image:'https://cdn.pixabay.com/photo/2015/04/04/19/13/three-706895_1280.jpg'},
+        {id: 1, label: 'Upload your Syllabi', description: 'Upload your course syllabuses from local files or Google Drive to get started', image: image1},
+        {id: 2, label: 'Choose you preffered export platform', description: 'Choose your preferred platform to stay on top of your events', image: image2},
+        {id: 3, label: 'Get a preview', description: 'Review and upload your schedule with ease', image: image3},
     ];
 
 

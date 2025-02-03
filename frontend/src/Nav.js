@@ -179,7 +179,6 @@ export default function Nav() {
                         >
                             {links.map((item) => (
                                 <li key={item.name} className="relative" ref={item.name === "LinkedIn" ? linkedinRef : null}>
-                                {/* ✅ If LinkedIn, show dropdown */}
                                 {item.name === "LinkedIn" ? (
                                     <>
                                         <button

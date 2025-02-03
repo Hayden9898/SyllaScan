@@ -19,6 +19,9 @@ export default function Home() {
                     </Link>
                 </div>
                 <div className='title-col'>
+                    <div className="img-box">
+                        <img src="https://thumbs.dreamstime.com/b/time-management-businesswoman-sitting-bulb-productivity-concept-business-vector-illustration-flat-cartoon-isolate-153871350.jpg"></img>
+                    </div>
                 </div>
             </div>
             <svg className='wave' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
@@ -44,10 +47,10 @@ export default function Home() {
                         <div className='intro-title'>
                             <p>What we do</p>
                             <div className='intro-subtitle'>
-                                <p>Boost Productivity</p>
+                                <p>Boost Overall Productivity</p>
                             </div>
                             <div className='sub-paragraph'>
-                                <p>Simple to use, powerful in action. Utilize AI to remind you of upcoming classes, assignmnets, quizzes, and tests.</p>
+                                <p>Effortless to use, powerful in action. Let AI help you stay on top of your classes, assignments, quizzes, and tests</p>
                             </div>
                         </div>
                     </div>

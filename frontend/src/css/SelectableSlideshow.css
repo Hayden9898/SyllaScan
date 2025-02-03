@@ -2,10 +2,10 @@
   display: flex;
   gap: 20px;
   padding: 20px;
-  padding-bottom: 200px; /* Keep bottom padding */
+  padding-bottom: 300px; /* Keep bottom padding */
   padding-left: 150px;
   align-items: flex-start; /* Align items to the top */
-  height: 400px;
+  height: 500px;
 }
 
 .options {
@@ -59,17 +59,20 @@
 .image-display {
   flex: 2;
   display: flex;
-  align-items: flex-start; /* Align image to the top */
-  justify-content: center;
+  align-items: flex-start; 
+  justify-content: flex-end;
   height: 100%;
   padding-bottom: 40px;
+  position: relative; 
+  top: -60px; 
+  right: 80px;
 }
 
 .slideshow-image {
-  height: 300px;
-  max-width: 100%;
-  max-height: 400px;
-  object-fit: contain;
+  width: 100%; 
+  max-width: 700px;
+  height: 400px; 
+  object-fit: fill;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }

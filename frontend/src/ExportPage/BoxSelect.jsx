@@ -8,41 +8,41 @@ const SelectableBoxRow = ({ selectedBox, setSelectedBox }) => {
 
 	// Array to hold the data for each box
 	const boxInfo = [
-		{
-			description: "Calendar File",
-			bgColor: "#99ff99",
-			imageUrl:
-				"https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg",
-		},
-		{
-			description: "Outlook",
-			bgColor: "#ffcc99",
-			imageUrl:
-				"https://upload.wikimedia.org/wikipedia/commons/7/7e/Outlook_icon.svg",
-		},
+		// {
+		// 	description: "Calendar File",
+		// 	bgColor: "#99ff99",
+		// 	imageUrl:
+		// 		"https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg",
+		// },
+		// {
+		// 	description: "Outlook",
+		// 	bgColor: "#ffcc99",
+		// 	imageUrl:
+		// 		"https://upload.wikimedia.org/wikipedia/commons/7/7e/Outlook_icon.svg",
+		// },
 		{
 			description: "Google Calendar",
 			bgColor: "#ff9999",
 			imageUrl:
 				"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Calendar_icon_%282020%29.svg/1024px-Google_Calendar_icon_%282020%29.svg.png",
 		},
-		{
-			description: "Notion",
-			bgColor: "#99ff99",
-			imageUrl:
-				"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Notion-logo.svg/1200px-Notion-logo.svg.png",
-		},
-		{
-			description: "iCal",
-			bgColor: "#9999ff",
-			imageUrl:
-				"https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678116-calendar-512.png",
-		},
-		{
-			description: "Google Sheets",
-			bgColor: "#ffcc99",
-			imageUrl: "https://cdn-icons-png.flaticon.com/256/2965/2965327.png",
-		},
+		// {
+		// 	description: "Notion",
+		// 	bgColor: "#99ff99",
+		// 	imageUrl:
+		// 		"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Notion-logo.svg/1200px-Notion-logo.svg.png",
+		// },
+		// {
+		// 	description: "iCal",
+		// 	bgColor: "#9999ff",
+		// 	imageUrl:
+		// 		"https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678116-calendar-512.png",
+		// },
+		// {
+		// 	description: "Google Sheets",
+		// 	bgColor: "#ffcc99",
+		// 	imageUrl: "https://cdn-icons-png.flaticon.com/256/2965/2965327.png",
+		// },
 	];
 
 	return (
