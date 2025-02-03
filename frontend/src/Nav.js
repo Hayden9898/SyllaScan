@@ -7,7 +7,7 @@ import {
 } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import { checkLoginStatus, handleSignOut } from 'Login/functions';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef} from 'react';
 import { HiBars3, HiXMark } from "react-icons/hi2";
 import { Link } from 'react-router-dom';
 import { cn } from "utils/cn";
@@ -16,8 +16,7 @@ import "css/Nav.css";
 
 const navigation = [
     { name: "Home", href: "/", current: true },
-    { name: "Features", href: "#", current: false },
-    { name: "Pricing", href: "#", current: false },
+    { name: "Features", href: "/#features", current: false },
 ];
 
 const links = [
@@ -35,9 +34,12 @@ export default function Nav() {
     const [isMounted, setIsMounted] = useState(false);
     const location = useLocation();
     const isHomePage = location.pathname === "/";
+    const [linkedinDropdownOpen, setLinkedinDropdownOpen] = useState(false);
+    const linkedinRef = useRef(null);
 
     useEffect(() => {
         setVisible(true);
+        setHasScrolled(false);
     }, [location.pathname]);
 
     useEffect(() => {
@@ -92,7 +94,15 @@ export default function Nav() {
 
         fetchLoginStatus();
     }, []);
-
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (linkedinRef.current && !linkedinRef.current.contains(event.target)) {
+                setLinkedinDropdownOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
     return (
         <AnimatePresence mode="wait">
             <motion.nav
@@ -168,17 +178,51 @@ export default function Nav() {
                             )}
                         >
                             {links.map((item) => (
-                                <li key={item.name}>
-                                    <Link
-                                        to={item.href}
-                                        target="_blank"
-                                        className="link"
-                                        onClick={() => setOpen(false)}
-                                    >
+                                <li key={item.name} className="relative" ref={item.name === "LinkedIn" ? linkedinRef : null}>
+                                {/* ✅ If LinkedIn, show dropdown */}
+                                {item.name === "LinkedIn" ? (
+                                    <>
+                                        <button
+                                            onClick={() => setLinkedinDropdownOpen(!linkedinDropdownOpen)}
+                                            className="link"
+                                        >
+                                            {item.name}
+                                        </button>
+                                        {linkedinDropdownOpen && (
+                                            <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded-lg shadow-lg border border-gray-200">
+                                                <ul className="flex flex-col p-2">
+                                                    <li>
+                                                        <a
+                                                            href="https://www.linkedin.com/in/hayden-choi9/"
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="block px-4 py-2 hover:bg-gray-100 rounded-md"
+                                                        >
+                                                            Hayden Choi
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a
+                                                            href="https://www.linkedin.com/in/petersonguo/"
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="block px-4 py-2 hover:bg-gray-100 rounded-md"
+                                                        >
+                                                            Peterson Guo
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <a href={item.href} target="_blank" className="link">
                                         {item.name}
-                                    </Link>
-                                </li>
+                                    </a>
+                                )}
+                            </li>
                             ))}
+
                             {loggedIn &&
                                 <li>
                                     <Button className="shadow-none" onClick={handleSignOut}>Signout</Button>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Outlet, Route, Routes, useLocation } from "react-router-dom";
 
 import Nav from 'Nav';
 
@@ -20,6 +20,19 @@ function App() {
   const [localFiles, setLocalFiles] = useState([]);
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(true);
+  const ScrollToHashElement = () => {
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.hash) {
+            const element = document.getElementById(location.hash.substring(1));
+            if (element) {
+                element.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        }
+    }, [location]);
+    return null;
+  };
 
   useEffect(() => {
     const getFiles = async () => {
@@ -44,6 +57,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToHashElement />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />

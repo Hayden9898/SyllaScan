@@ -47,14 +47,16 @@ export default function Home() {
                                 <p>Boost Productivity</p>
                             </div>
                             <div className='sub-paragraph'>
-                                <p>Simple to use, powerful in action. Utilize AI to remind you of upcoming classes, assignmnets, quizes, and tests.</p>
+                                <p>Simple to use, powerful in action. Utilize AI to remind you of upcoming classes, assignmnets, quizzes, and tests.</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className='slideshow'>
-                    <Slideshow />
-                </div>
+                <section id="features">
+                    <div className='slideshow'>
+                        <Slideshow />
+                    </div>
+                </section>
             </div>
         </>
     )
