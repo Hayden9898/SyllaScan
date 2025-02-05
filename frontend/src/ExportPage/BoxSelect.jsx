@@ -8,12 +8,12 @@ const SelectableBoxRow = ({ selectedBox, setSelectedBox }) => {
 
 	// Array to hold the data for each box
 	const boxInfo = [
-		// {
-		// 	description: "Calendar File",
-		// 	bgColor: "#99ff99",
-		// 	imageUrl:
-		// 		"https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg",
-		// },
+		{
+			description: "iCal",
+			bgColor: "#99ff99",
+			imageUrl:
+				"https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678116-calendar-512.png",
+		},
 		// {
 		// 	description: "Outlook",
 		// 	bgColor: "#ffcc99",
@@ -36,7 +36,7 @@ const SelectableBoxRow = ({ selectedBox, setSelectedBox }) => {
 		// 	description: "iCal",
 		// 	bgColor: "#9999ff",
 		// 	imageUrl:
-		// 		"https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678116-calendar-512.png",
+		// 		"",
 		// },
 		// {
 		// 	description: "Google Sheets",

@@ -83,7 +83,9 @@ export async function handleExportClick(e, selectedBox, setError, fileLinks, loc
         return;
     }
 
-    if (selectedBox === "Calendar File") {
+    if (selectedBox === "iCal") {
+        navigate("/processing");
+
         const fileData = await uploadFiles(fileLinks, localFiles, setFileLinks, setLocalFiles);
         if (fileData.ok) {
             setResults(fileData.data);
@@ -135,10 +137,6 @@ export async function handleExportClick(e, selectedBox, setError, fileLinks, loc
 
     if (selectedBox === "Notion") {
         setError("Notion export not yet supported");
-        return;
-    }
-    if (selectedBox === "iCal") {
-        setError("iCal export not yet supported");
         return;
     }
     if (selectedBox === "Google Sheets") {
