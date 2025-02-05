@@ -102,7 +102,7 @@ export async function handleExportClick(e, selectedBox, setError, fileLinks, loc
     }
 
     if (selectedBox === "Google Calendar") {
-        const res = await login("/export");
+        const res = await login("/export", ["https://www.googleapis.com/auth/calendar"]);
 
         navigate("/processing");
 

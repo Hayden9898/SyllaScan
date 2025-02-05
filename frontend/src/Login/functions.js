@@ -1,5 +1,5 @@
-export async function login(redirect) {
-    const hasAccess = await checkScopes();
+export async function login(redirect, scopes) {
+    const hasAccess = await checkScopes(scopes);
     if (!hasAccess) {
         const redirect_uri = redirect ? `?redirect_to=${encodeURIComponent(redirect)}` : "";
         window.location.href = `http://localhost:8000/oauth/google${redirect_uri}`;
@@ -7,13 +7,17 @@ export async function login(redirect) {
     return hasAccess;
 }
 
-export async function checkScopes() {
+export async function checkScopes(scopes) {
+    console.log(scopes)
     const res = await fetch("http://localhost:8000/oauth/google/check_scopes", {
-        method: "GET",
+        method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        credentials: "include"
+        credentials: "include",
+        body: JSON.stringify({
+            scopes: scopes
+        }),
     });
     console.log(res)
     if (!res.ok) {

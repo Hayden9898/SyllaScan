@@ -100,12 +100,13 @@ def google_callback(request: Request, state: str = Depends(validate_state)):
     return response
 
 
-@router.get("/check_scopes")
-def call_check_scopes(request: Request):
+@router.post("/check_scopes")
+async def call_check_scopes(request: Request):
     """
     Checks if the access token has the required Google OAuth scopes.
     """
-    return oauth.check_scopes(request)
+    req_json = await request.json()
+    return oauth.check_scopes(request, req_json.get("scopes"))
 
 
 @router.get("/refresh")

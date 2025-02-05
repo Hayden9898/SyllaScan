@@ -25,7 +25,7 @@ async def get_files(request: Request, background_tasks: BackgroundTasks) -> dict
 
     bearer = f"Bearer {request.cookies.get('access_token')}"
 
-    has_scopes = oauth.check_scopes(request)
+    has_scopes = oauth.check_scopes(request, ["https://www.googleapis.com/auth/drive"])
 
     if not has_scopes:
         raise HTTPException(
@@ -108,7 +108,7 @@ async def get_files(request: Request, background_tasks: BackgroundTasks) -> dict
 async def export_to_gcal(request: Request) -> dict:
     data = await request.json()
 
-    has_scopes = oauth.check_scopes(request)
+    has_scopes = oauth.check_scopes(request, ["https://www.googleapis.com/auth/calendar"])
 
     if not has_scopes:
         raise HTTPException(

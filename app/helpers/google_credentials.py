@@ -118,13 +118,16 @@ class GoogleOAuth:
             ) from e
 
 
-    def check_scopes(self, request: Request):
+    def check_scopes(self, request: Request, scopes: list[str] = None) -> dict:
         """
         Checks if the access token has the required Google OAuth scopes.
         """
+        if not scopes:
+            scopes = self.scopes
+
         try:
             token_scopes = self.get_scopes(request.cookies.get("access_token"))
-            missing_scopes = set(self.scopes) - token_scopes
+            missing_scopes = set(scopes) - token_scopes
 
             if missing_scopes:
                 return HTTPException(status_code=401, detail="Insufficient scopes")
