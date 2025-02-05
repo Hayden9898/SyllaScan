@@ -5,13 +5,14 @@ from dotenv import load_dotenv
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from helpers.openai import process_upload
-from routers import google, google_oauth
+from routers import google, google_oauth, microsoft
 
 load_dotenv()
 
 app = FastAPI()
 app.include_router(google_oauth.router, prefix="/oauth/google", tags=["oauth/google"])
 app.include_router(google.router, prefix="/google", tags=["google"])
+app.include_router(microsoft.router, prefix="/microsoft", tags=["microsoft"])
 
 origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
